@@ -48,6 +48,10 @@
 
 void SystemClock_Config(void);
 
+//LI-FI data
+uint8_t rx3_data;
+uint8_t tx_data[5]="hello";
+
 int main(void)
 {
   int tag;
@@ -63,9 +67,19 @@ int main(void)
   
   integ_mac_init();
 
-  
+
   printf("$ ");
   while(1) {
+
+
+/////////////LI-FI//////////////////////////
+//send "HELLO from huart5 to huart3"
+/*
+     HAL_UART_Transmit(&huart5,tx_data,5,1000);
+    HAL_Delay(1000);
+*/
+//////////////Li-FI/////////////////////////
+
     __disable_interrupt();
     tag = task_delete(&task);
     __enable_interrupt();
@@ -79,6 +93,18 @@ int main(void)
   * @brief System Clock Configuration
   * @retval None
   */
+
+ //LI-FI callback function
+ /*
+ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+    if(huart->Instance ==USART3)
+    {
+      HAL_UART_Receive_IT(&huart3,&rx3_data,5);
+      HAL_UART_Transmit(&huart3,&rx3_data,5,10);
+    }
+}
+*/
 void SystemClock_Config(void)
 {
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
