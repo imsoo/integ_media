@@ -57,8 +57,10 @@ int main(void)
   SystemClock_Config();
   GPIO_Init();
   MX_TIM6_Init();
+  UART2_Init(); // BT
   UART3_Init(); // PC
-  UART4_Init();
+  UART4_Init(); // CC2530
+  UART5_Init(); // LIFI
   HAL_Delay(500);
   
   integ_mac_init();

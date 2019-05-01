@@ -7,10 +7,12 @@ task.c
 #include <stdlib.h>
 #include <string.h>
 #include "stm32f4xx_hal.h"
+#include "uart.h"
 #include "task.h"
 #include "integ_mac.h"
 #include "frame_queue.h"
 #include "hash.h"
+#include "bluetooth.h"
 
 struct task Task_q[MAX_TASK];
 volatile int Task_f, Task_r;
@@ -56,6 +58,7 @@ void task_cmd(void *arg)
   }
   else if(!strcmp(cp0, "info")) {
     PrintAllHashData();
+    cur_media = opt_media = BLUETOOTH;
   }
   else if(!strcmp(cp0, "s")) {
     INTEG_FRAME frame;

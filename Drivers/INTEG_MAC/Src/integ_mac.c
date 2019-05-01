@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include "integ_mac.h"
 #include "frame_queue.h"
@@ -30,6 +31,7 @@ unsigned char my_cc2530_address[CC2530_ADDR_LEN] = {0x11, 0x11, 0x11, 0x11, 0x11
 unsigned char seqNumber;        // 순서 번호
 unsigned char cur_media;              // 현재 사용하는 매체
 unsigned char opt_media;              // 최적의 매체
+unsigned char deviceType;            // 장치 유형
 
 
 #define TRANSMIT_FRAME 1
@@ -60,7 +62,7 @@ void integ_mac_handler(void * arg)
     case DATA_MSG:      
       // 데이터 송신 명령 
       if(frame_state == TRANSMIT_FRAME) {
-        printf("** Data 송신\r\n");
+        printf("** Data 송신 seqNum %d\r\n", frame->seqNumber);
         cur_media = frame->media_type;
         
         // 재전송 대기열의 프레임 추가
@@ -73,8 +75,8 @@ void integ_mac_handler(void * arg)
         strcpy(retrans_task.arg, "");
         insert_timer(&retrans_task, RETRANSMIT_TIME);
         
-        // 재전송 프레임인 경우 최적의 매체로 전송해라
-        if(cur_media == OPT_MEDIA) {    
+        // 재전송 프레임인 경우 최적의 매체로 전송
+        if(cur_media == OPT_MEDIA) {
           cur_media = opt_media;
           frame->media_type = cur_media;
         }
@@ -118,9 +120,11 @@ void integ_mac_handler(void * arg)
       }
       // ACK 수신 시
       else if(frame_state == RECEIVE_FRAME) {
-        printf("** ACK 수신\r\n");
+        int ackNumber;
+        ackNumber = frame->ackNumber - 1;
+        printf("** ACK 수신 ackNum : %d\r\n", ackNumber + 1);
         // 재전송 대기열의 프레임 제거
-        re_frame_queue_remove((frame->ackNumber - 1) % MAX_SEQ_NUMBER);
+        re_frame_queue_remove(ackNumber % MAX_SEQ_NUMBER);
       }
       break;
     case PASS_MSG:
@@ -157,17 +161,6 @@ void integ_mac_init(void)
   frame_queue_init();
   re_frame_queue_init();
   
-  
-  // MCU <---> 매체 통신 초기화
-  
-  // 매체 초기화
-  for(i = 0; i < MEDIA_NUM; i++) {
-    result = fun_init[i](0x00);
-    printf("* [%s] 초기화 %s \r\n", media_name[i], result_string[result]); 
-  }
-  // 최적 매체 선택
-  opt_media = cur_media = CC2530;
-  
   my_integ_address[0] = LSB(STM32_UUID[0]);
   my_cc2530_address[0] = LSB(STM32_UUID[0]);
   my_lifi_address[0] = LSB(STM32_UUID[0]);
@@ -177,12 +170,14 @@ void integ_mac_init(void)
     hood_cc2530_address[0] = 0x2E;
     hood_lifi_address[0] = 0x2E;
     hood_bluetooth_address[0] = 0x2E;
+    deviceType = MASTER;
   }
   else {
     hood_integ_address[0] = 0x2c;
     hood_cc2530_address[0] = 0x2c;
     hood_lifi_address[0] = 0x2c;
     hood_bluetooth_address[0] = 0x2c;
+    deviceType = SLAVE;
   }
   
   table = get_hashNode();
@@ -203,14 +198,41 @@ void integ_mac_init(void)
   table->data.media_addr[CC2530] = hood_cc2530_address;
   AddHashData(table->id, table);
   
+  // MCU <---> 매체 통신 초기화
+  
+  // 매체 초기화
+  for(i = 0; i < MEDIA_NUM; i++) {
+    result = fun_init[i](deviceType);
+    printf("* [%s] 초기화 %s \r\n", media_name[i], result_string[result]); 
+  }
+  // 최적 매체 선택
+  //opt_media = cur_media = BLUETOOTH;
+  opt_media = cur_media = BLUETOOTH;
+  
   integ_mac_handler("");
   
+  struct task task;
+  task.fun = integ_find_opt_link;
+  strcpy(task.arg, "");
+  insert_timer(&task, FIND_OPT_PERIOD);
+}
+
+void integ_find_opt_link(void * arg)
+{
+  struct task task;
+  task.fun = integ_find_opt_link;
+  strcpy(task.arg, "");
+  insert_timer(&task, FIND_OPT_PERIOD);
+  opt_media = (rand() % 2) + 1;
+  //opt_media = CC2530;
+  //printf("최적링크 : %s\r\n", media_name[opt_media]);
 }
 
 // 프레임 출력
 void integ_print_frame(INTEG_FRAME *frame)
 {
   int i;
+  
   printf("----------\r\n");
   printf("Source Address : ");
   for(i = 0; i < INTEG_ADDR_LEN; i++) {
@@ -222,6 +244,7 @@ void integ_print_frame(INTEG_FRAME *frame)
   }
   printf("\r\nLength : %d | msgType : %d | mediaType : %d | seqNumber : %d | ackNumber : %d\r\n", frame->frame_length, frame->message_type, frame->media_type, frame->seqNumber, frame->ackNumber);
   printf("----------\r\n");
+  
 }
 
 unsigned char get_seq_number(void)
