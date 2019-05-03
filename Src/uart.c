@@ -146,7 +146,7 @@ void UART3_Init(void)
   q_init();
   /* USART3 Init */
   huart3.Instance = USART3;
-  huart3.Init.BaudRate = 115200;
+  huart3.Init.BaudRate = 921600;
   huart3.Init.WordLength = UART_WORDLENGTH_8B;
   huart3.Init.StopBits = UART_STOPBITS_1;
   huart3.Init.Parity = UART_PARITY_NONE;
@@ -196,12 +196,18 @@ void UART5_Init(void)
   }
 }
 
+void print_uart_state() {
+  printf("%d, %d, %d, %d\r\n", HAL_UART_Transmit(&huart2, "a", 1, 1000), HAL_UART_Transmit(&huart3, "a", 1, 1000), HAL_UART_Transmit(&huart4, "a", 1, 1000), HAL_UART_Transmit(&huart5, "a", 1, 1000));
+  printf("%02x %02x %02x %02x\r\n", HAL_UART_GetState(&huart2), HAL_UART_GetState(&huart3), HAL_UART_GetState(&huart4), HAL_UART_GetState(&huart5));
+}
+
 
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
   struct task task;
   unsigned char t_char;
+  // BT
   if(huart->Instance == huart2.Instance) {
     t_char = btBuf[bt_index];
     //printf("%c ", t_char);
@@ -216,8 +222,8 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
       if(t_char == 'K') { bt_state = 2;     bt_index++;}
       break;
     case 2:
-      if(t_char == '+') { bt_state = 3;     bt_index++;}
-      else { bt_state = 1; bt_index = 1; btBuf[0] = t_char;}
+      if(t_char == '+') { bt_state = 3; bt_index++;}
+      else { bt_state = 1; bt_index = 1;  btBuf[0] = t_char;}
       break;
     case 3:
       if(t_char == 'S') { bt_state = 0; HAL_UART_Receive(&huart2, btBuf + bt_index + 1, 4, 1000); bt_index = 0;}
@@ -236,6 +242,8 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
     HAL_UART_Receive_IT(&huart2, btBuf, 1);
     */
   }
+  
+  // CC2530
   else if (huart->Instance == huart3.Instance)
   {
     if (rxData != ETX) {
@@ -322,7 +330,10 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
 {
   uint8_t ch;
   
-  if (huart->Instance == huart3.Instance)
+  if (huart->Instance == huart2.Instance) {
+    printf("a");
+  }
+  else if (huart->Instance == huart3.Instance)
   {
     if ((ch = qo_delete()) == 0) {
       uart_busy = 0;
@@ -333,7 +344,7 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
     }
   }
   else  if (huart->Instance == huart4.Instance) {
-    
+    printf("a");
   }
 }
 

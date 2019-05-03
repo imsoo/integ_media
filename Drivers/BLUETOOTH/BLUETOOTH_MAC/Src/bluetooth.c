@@ -19,21 +19,20 @@ unsigned char bluetooth_init(unsigned char deviceType)
   bt_index = 0;
   bt_count = 0;
   if(deviceType == MASTER) {
-    printf("MASTER 로 초기화\r\n");
+    //printf("MASTER 로 초기화\r\n");
     BT_M_Init();
   }
   // SLAVE
   else {
-    printf("SLAVE 로 초기화\r\n");
+    //printf("SLAVE 로 초기화\r\n");
     BT_S_Init();
   }
-  printf("초기화 성공\r\n");
   return R_SUCCESS;
 }
 
 unsigned char bluetooth_send(unsigned char* dest_addr, unsigned char* data, int data_length)
 {
-  printf("[BLUETOOTH] 전송 시도\r\n");
+  //printf("[BLUETOOTH] 전송 시도\r\n");
   HAL_UART_Transmit(&huart2, data, data_length, 1000);
   return 0;
 }
@@ -96,21 +95,21 @@ void BT_M_Init()
   if(HAL_UART_Transmit(&huart2, AT, 2, 1000)==HAL_OK)
   {
     HAL_UART_Receive(&huart2, OK, 2, 1000);
-    HAL_UART_Transmit(&huart3, "1. AT\r\n", 7, 1000);
+    //HAL_UART_Transmit(&huart3, "1. AT\r\n", 7, 1000);
   }
   HAL_Delay(300);
   
   if(HAL_UART_Transmit(&huart2, SET_BAUD, 8, 1000)==HAL_OK)
   {
     HAL_UART_Receive(&huart2, BAUD, 8, 1000);
-    HAL_UART_Transmit(&huart3, "2. 115200 baud\r\n", 16, 1000);
+    //HAL_UART_Transmit(&huart3, "2. 115200 baud\r\n", 16, 1000);
   }
   
   HAL_Delay(300);
   if(HAL_UART_Transmit(&huart2, SET_MODE, 8, 1000)==HAL_OK)
   {
     HAL_UART_Receive(&huart2, MODE, 8, 1000);
-    HAL_UART_Transmit(&huart3, "3. Mode2\r\n", 10, 1000);
+    //HAL_UART_Transmit(&huart3, "3. Mode2\r\n", 10, 1000);
   }
   HAL_Delay(300);
   /*if(HAL_UART_Transmit(&huart2, NOTI, 8, 1000)==HAL_OK)
@@ -121,13 +120,13 @@ void BT_M_Init()
   if(HAL_UART_Transmit(&huart2, SET_IMME0, 8, 1000)==HAL_OK)
   {
     HAL_UART_Receive(&huart2, IMME, 8, 1000);
-    HAL_UART_Transmit(&huart3, "4. IMME0\r\n", 10, 1000);
+    //HAL_UART_Transmit(&huart3, "4. IMME0\r\n", 10, 1000);
   }
   HAL_Delay(800);
   if(HAL_UART_Transmit(&huart2, SET_MASTER, 8, 1000)==HAL_OK)
   {
     HAL_UART_Receive(&huart2, RESULT_ROLE, 8, 1000);
-    HAL_UART_Transmit(&huart3, "5. Master\r\n", 11, 1000);
+    //HAL_UART_Transmit(&huart3, "5. Master\r\n", 11, 1000);
   }
   HAL_Delay(300);
   /*
@@ -149,21 +148,21 @@ void BT_S_Init()
   if(HAL_UART_Transmit(&huart2, AT, 2, 1000)==HAL_OK)
   {
     HAL_UART_Receive(&huart2, OK, 2, 1000);
-    HAL_UART_Transmit(&huart3, "1. AT\r\n", 7, 1000);
+    //HAL_UART_Transmit(&huart3, "1. AT\r\n", 7, 1000);
   }
   HAL_Delay(300);
   
   if(HAL_UART_Transmit(&huart2, SET_BAUD, 8, 1000)==HAL_OK)
   {
     HAL_UART_Receive(&huart2, BAUD, 8, 1000);
-    HAL_UART_Transmit(&huart3, "2. 115200 baud\r\n", 16, 1000);
+    //HAL_UART_Transmit(&huart3, "2. 115200 baud\r\n", 16, 1000);
   }
   
   HAL_Delay(300);
   if(HAL_UART_Transmit(&huart2, SET_MODE, 8, 1000)==HAL_OK)
   {
     HAL_UART_Receive(&huart2, MODE, 8, 1000);
-    HAL_UART_Transmit(&huart3, "3. Mode2\r\n", 10, 1000);
+    //HAL_UART_Transmit(&huart3, "3. Mode2\r\n", 10, 1000);
   }
   HAL_Delay(300);
   /*
@@ -175,13 +174,13 @@ void BT_S_Init()
   if(HAL_UART_Transmit(&huart2, SET_IMME0, 8, 1000)==HAL_OK)
   {
     HAL_UART_Receive(&huart2, IMME, 8, 1000);
-    HAL_UART_Transmit(&huart3, "4. IMME0\r\n", 10, 1000);
+    //HAL_UART_Transmit(&huart3, "4. IMME0\r\n", 10, 1000);
   }
   HAL_Delay(800);
   if(HAL_UART_Transmit(&huart2, SET_SLAVE, 8, 1000)==HAL_OK)
   {
     HAL_UART_Receive(&huart2, RESULT_ROLE, 8, 1000);
-    HAL_UART_Transmit(&huart3, "5. Slave\r\n", 11, 1000);
+    //HAL_UART_Transmit(&huart3, "5. Slave\r\n", 11, 1000);
   }
   HAL_Delay(300);
   /*
@@ -197,6 +196,7 @@ void BT_S_Init()
   }
   HAL_Delay(1000);
 }
+
 // AT 커맨더 진입
 void BT_AT()
 {

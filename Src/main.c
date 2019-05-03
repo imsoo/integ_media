@@ -45,6 +45,7 @@
 #include "task.h"
 #include "timer.h"
 #include "integ_mac.h"
+#include "display.h"
 
 void SystemClock_Config(void);
 
@@ -62,11 +63,11 @@ int main(void)
   UART4_Init(); // CC2530
   UART5_Init(); // LIFI
   HAL_Delay(500);
+
+  init_display_buffer();
   
   integ_mac_init();
 
-  
-  printf("$ ");
   while(1) {
     __disable_interrupt();
     tag = task_delete(&task);

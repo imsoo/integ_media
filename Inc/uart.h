@@ -18,5 +18,6 @@ void UART3_Init(void);
 void UART4_Init(void);
 void UART5_Init(void);
 void uart_echo(uint8_t ch);
+void print_uart_state(void);
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart);
 void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart);

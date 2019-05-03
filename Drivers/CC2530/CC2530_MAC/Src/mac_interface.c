@@ -385,7 +385,7 @@ void macAssociateReq()
 #define MAC_DATA_REQ_PAYLOAD_LEN 0x1C
 unsigned char macDataReq(unsigned char* dest_addr, unsigned char* data, int data_length)
 {
-  printf("[CC2530] 전송 시도\r\n");
+  //printf("[CC2530] 전송 시도\r\n");
   macBuf[0] = MAC_DATA_REQ_PAYLOAD_LEN + data_length;
   macBuf[1] = MSB(MAC_DATA_REQ);
   macBuf[2] = LSB(MAC_DATA_REQ);

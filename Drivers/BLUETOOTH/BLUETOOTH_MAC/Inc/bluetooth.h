@@ -11,6 +11,7 @@ unsigned char bluetooth_send(unsigned char* dest_addr, unsigned char* data, int 
 // BlueTooth Init
 void BT_M_Init();
 void BT_S_Init();
+
 // AT 커맨더 진입
 void BT_AT();
 //속도 설정 - 115200
