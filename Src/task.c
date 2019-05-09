@@ -76,6 +76,7 @@ void task_cmd(void *arg)
     frame.data[2] = 0x6c;
     frame.data[3] = 0x6c;
     frame.data[4] = 0x6f;
+    frame.ackNumber = 0;
     frame.seqNumber = get_seq_number();
     frame.data[5] = frame.seqNumber + 0x30;
     frame_queue_insert((unsigned char *)&frame);

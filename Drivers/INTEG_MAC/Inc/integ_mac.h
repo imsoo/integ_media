@@ -27,6 +27,7 @@ extern unsigned char STATUS_TABLE[STATUS_NUM][MEDIA_NUM];
 
 #define FIND_OPT_PERIOD 5 // 최적 노드 검색 주기 500ms
 #define RETRANSMIT_TIME 3      // 재전송 주기 300ms
+#define RETRANSMIT_NUM 3      // 재전송 횟수
 #define R_SUCCESS 1
 #define R_FAIL 0
 static char *result_string[2] = {"FAIL", "SUCCESS"};
@@ -58,7 +59,7 @@ extern unsigned char my_integ_address[INTEG_ADDR_LEN];
 extern unsigned char hood_integ_address[INTEG_ADDR_LEN];
 
 #define MAX_SEQ_NUMBER 10                   // 순서 번호 최대
-#define DEFAULT_SEQ_NUMBER 1            // 순서 번호 초기값
+#define DEFAULT_SEQ_NUMBER 0            // 순서 번호 초기값
 extern unsigned char seqNumber;         // 순서 번호
 
 #define STATIC_ADDR 0

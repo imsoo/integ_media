@@ -75,20 +75,27 @@ void integ_mac_handler(void * arg)
         //printf("** Data 송신 seqNum %d\r\n", frame->seqNumber);
         cur_media = frame->media_type;
         
+        
         // 재전송 프레임인 경우 최적의 매체로 전송
         if((cur_media & OPT_MEDIA) == OPT_MEDIA) {
           prev_media = cur_media & 0x0F;
           
-          // 이전 전송 매체 연결 상태 변경
-          STATUS_TABLE[CONNECT_STATUS][prev_media] = DISCON;
+          // ackNumber 필드 를 재전송한 횟수로 사용한다. (임시)
+          frame->ackNumber++;
           
-          integ_find_opt_link(NULL);
-          cur_media = opt_media;
+          cur_media = prev_media;
+          // 재전송 횟수가 3회이면 매체 연결 상태 끊김으로 변경
+          if(frame->ackNumber >= RETRANSMIT_NUM) {
+            // 이전 전송 매체 연결 상태 변경
+            STATUS_TABLE[CONNECT_STATUS][prev_media] = DISCON;
+            integ_find_opt_link(NULL);
+            cur_media = opt_media;
+          }
           frame->media_type = OPT_MEDIA | cur_media;
           
           // 재전송 대기열의 프레임 추가
           re_frame_queue_insert((unsigned char *)frame);
-          sprintf(message_buffer, "* [%s] 데이터 전송 실패 \r\n",  media_name[prev_media]);
+          sprintf(message_buffer, "* [%s] %d 번 데이터 전송 실패 \r\n", media_name[prev_media], frame->ackNumber);
           insert_display_message(message_buffer);
           
           if(prev_media != cur_media) {
@@ -126,7 +133,7 @@ void integ_mac_handler(void * arg)
       // 데이터 수신 시 ACK 생성
       else if(frame_state == RECEIVE_FRAME) {
         //printf("** Data 수신\r\n");
-      
+        
         // ACK 패킷 생성
         t_frame.frame_length = frame->frame_length;
         t_frame.message_type = ACK_MSG;
@@ -288,11 +295,11 @@ void integ_find_opt_link(void * arg)
   struct task task;
   int i;
   
-    // 주기적인 TASK 삽입
+  // 주기적인 TASK 삽입
   task.fun = integ_find_opt_link;
   strcpy(task.arg, "");
   insert_timer(&task, FIND_OPT_PERIOD);
-
+  
   for(i = 0; i < MEDIA_NUM; i++) {
     if(STATUS_TABLE[INIT_STATUS][i] && STATUS_TABLE[CONNECT_STATUS][i]) {
       //opt_media = BLUETOOTH;
@@ -303,7 +310,7 @@ void integ_find_opt_link(void * arg)
   }
   //opt_media = (rand() % 2) + 1;
   opt_media = (opt_media + 1) % 2 + 1;
-
+  
   
 }
 
