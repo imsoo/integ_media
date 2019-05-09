@@ -8,7 +8,8 @@ gpio.c
 #include "gpio.h"
 #include "utilities.h"
 #include "task.h"
-#include "cc2530.h"
+#include "integ_mac.h"
+#include "bluetooth.h"
 
 void GPIO_Init(void)
 {
@@ -32,7 +33,38 @@ void GPIO_Init(void)
   
   /*Configure GPIO pin : PC8 */
   GPIO_InitStruct.Pin = GPIO_PIN_8;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
   GPIO_InitStruct.Pull = GPIO_PULLDOWN;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+  
+  /* EXTI interrupt init */
+  HAL_NVIC_SetPriority(EXTI9_5_IRQn, 3, 1);
+  HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
+}
+
+// BT STATE : PC8 Falling interrupt Callback
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+  switch(GPIO_Pin)
+  {
+  case GPIO_PIN_8:
+    // falling BT ¿¬°á ²÷±è
+    if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_8) == GPIO_PIN_RESET) {
+      if(integ_init_state) {
+        bt_dis_count++;
+        //printf("BT disconnected\r\n");
+        // BT Àç¿¬°á
+        if(bt_dis_count > 4) {
+        struct task task;
+        task.fun = task_connect;
+        strcpy(task.arg, "");
+        task_insert(&task);
+        bt_dis_count = 0;
+        }
+      }
+    }
+    else {
+    }
+    break;
+  }
 }

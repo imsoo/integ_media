@@ -13,6 +13,7 @@
 static char *media_name[MEDIA_NUM] = {"LI-FI", "BLUETOOTH", "CC2530"};
 extern unsigned char cur_media;  // 현재 사용할 링크
 extern unsigned char opt_media;  // 현재 최적의 링크
+extern unsigned char integ_init_state; // 통합 MAC 초기화 상태
 
 // 연결 성태 저장 테이블
 #define STATUS_NUM 2

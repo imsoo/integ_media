@@ -60,8 +60,9 @@ void task_cmd(void *arg)
     return;
   }
   else if(!strcmp(cp0, "info")) {
-    PrintAllHashData();
-    print_uart_state();
+    //PrintAllHashData();
+    //print_uart_state();
+    BT_CONNET();
   }
   else if(!strcmp(cp0, "s")) {
     INTEG_FRAME frame;

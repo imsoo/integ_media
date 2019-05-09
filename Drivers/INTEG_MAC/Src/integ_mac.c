@@ -40,6 +40,7 @@ unsigned char opt_media;              // 최적의 매체
 unsigned char deviceType;            // 장치 유형
 
 unsigned char STATUS_TABLE[STATUS_NUM][MEDIA_NUM] = {{R_FAIL, R_FAIL, R_FAIL}, {DISCON, DISCON, DISCON}};
+unsigned char integ_init_state = 0;
 
 #define TRANSMIT_FRAME 1
 #define RECEIVE_FRAME 0
@@ -95,7 +96,7 @@ void integ_mac_handler(void * arg)
             insert_display_message(message_buffer);
           }
           
-          sprintf(message_buffer, "* [%s][SEQ : %d] 데이터 재전송 (목적지 : %02x) : %s\r\n", media_name[cur_media], frame->seqNumber, frame->dest_address[0], frame->data);
+          sprintf(message_buffer, "* [%s][SEQ : %d] 데이터 재전송 (→ 목적지 : %02x) : %s\r\n", media_name[cur_media], frame->seqNumber, frame->dest_address[0], frame->data);
           insert_display_message(message_buffer);
         }
         // 처음 전송인 경우
@@ -104,7 +105,7 @@ void integ_mac_handler(void * arg)
           re_frame_queue_insert((unsigned char *)frame);
           frame->media_type = cur_media;
           
-          sprintf(message_buffer, "* [%s][SEQ : %d] 데이터 전송 (목적지 : %02x) : %s\r\n", media_name[cur_media], frame->seqNumber, frame->dest_address[0], frame->data);
+          sprintf(message_buffer, "* [%s][SEQ : %d] 데이터 전송 ( → 목적지 : %02x) : %s\r\n", media_name[cur_media], frame->seqNumber, frame->dest_address[0], frame->data);
           insert_display_message(message_buffer);
         }
         
@@ -134,7 +135,7 @@ void integ_mac_handler(void * arg)
         memcpy(t_frame.dest_address, frame->src_address, INTEG_ADDR_LEN);
         memcpy(t_frame.src_address, my_integ_address, INTEG_ADDR_LEN);
         
-        sprintf(message_buffer, "* [%s][SEQ : %d] 데이터 수신 (근원지 : %02x) : %s\r\n",  media_name[t_frame.media_type],  frame->seqNumber, frame->src_address[0], frame->data);
+        sprintf(message_buffer, "* [%s][SEQ : %d] 데이터 수신 ( ← 근원지 : %02x) : %s\r\n",  media_name[t_frame.media_type],  frame->seqNumber, frame->src_address[0], frame->data);
         insert_display_message(message_buffer);
         
         // 수신 매체 연결 상태 변경
@@ -160,7 +161,7 @@ void integ_mac_handler(void * arg)
           fun_send[cur_media](table->data.media_addr[cur_media], (unsigned char *)frame, frame->frame_length);
         }
         
-        sprintf(message_buffer, "* [%s][ACK : %d] ACK 송신 (목적지 : %02x) \r\n", media_name[cur_media],  frame->ackNumber, frame->dest_address[0]);
+        sprintf(message_buffer, "* [%s][ACK : %d] ACK 송신 ( → 목적지 : %02x) \r\n", media_name[cur_media],  frame->ackNumber, frame->dest_address[0]);
         insert_display_message(message_buffer);
       }
       // ACK 수신 시
@@ -171,11 +172,11 @@ void integ_mac_handler(void * arg)
         STATUS_TABLE[CONNECT_STATUS][frame->media_type] = CON;
         
         ackNumber = frame->ackNumber - 1;
-        printf("** ACK 수신 ackNum : %d\r\n", ackNumber + 1);
+        //printf("** ACK 수신 ackNum : %d\r\n", ackNumber + 1);
         // 재전송 대기열의 프레임 제거
         re_frame_queue_remove(ackNumber % MAX_SEQ_NUMBER);
         
-        sprintf(message_buffer, "* [%s][ACK : %d] ACK 수신 (근원지 : %02x) \r\n", media_name[frame->media_type],  frame->ackNumber, frame->src_address[0]);
+        sprintf(message_buffer, "* [%s][ACK : %d] ACK 수신 ( ←근원지 : %02x) \r\n", media_name[frame->media_type],  frame->ackNumber, frame->src_address[0]);
         insert_display_message(message_buffer);
       }
       break;
@@ -271,15 +272,15 @@ void integ_mac_init(void)
   
   // 통합 MAC Handler TASK 삽입
   integ_mac_handler("");
-  
+  integ_init_state = 1;
   insert_display_message("* [INTEG] 통합 MAC 초기화 완료\r\n");
   
-  /*
+  
   struct task task;
   task.fun = integ_find_opt_link;
   strcpy(task.arg, "");
   insert_timer(&task, FIND_OPT_PERIOD);
-  */
+  
 }
 
 void integ_find_opt_link(void * arg)
@@ -287,21 +288,23 @@ void integ_find_opt_link(void * arg)
   struct task task;
   int i;
   
+    // 주기적인 TASK 삽입
+  task.fun = integ_find_opt_link;
+  strcpy(task.arg, "");
+  insert_timer(&task, FIND_OPT_PERIOD);
+
   for(i = 0; i < MEDIA_NUM; i++) {
     if(STATUS_TABLE[INIT_STATUS][i] && STATUS_TABLE[CONNECT_STATUS][i]) {
+      //opt_media = BLUETOOTH;
       opt_media = i;
+      //printf("최적매체 : %s\r\n", media_name[opt_media]);
       return;
     }
   }
   //opt_media = (rand() % 2) + 1;
   opt_media = (opt_media + 1) % 2 + 1;
 
-  /*
-  // 주기적인 TASK 삽입
-  task.fun = integ_find_opt_link;
-  strcpy(task.arg, "");
-  insert_timer(&task, FIND_OPT_PERIOD);
-  */
+  
 }
 
 // 프레임 출력
