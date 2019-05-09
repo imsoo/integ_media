@@ -11,8 +11,11 @@ uart.c
 #include "task.h"
 #include "mac_interface_uart.h"
 #include "mac_interface.h"      // ASSO RSP
+#include "bluetooth.h"
 #include "integ_mac.h"
 #include "frame_queue.h"
+#include "display.h"
+#include "timer.h"
 
 #define ETX 0x04
 
@@ -25,15 +28,17 @@ FILE __stdout;
 FILE __stdin;
 
 
-UART_HandleTypeDef huart1;
-UART_HandleTypeDef huart2;
+UART_HandleTypeDef huart2;      // <---> BT
 UART_HandleTypeDef huart3;      // <---> PC
 UART_HandleTypeDef huart4;      // <---> CC2530
+UART_HandleTypeDef huart5;      // <---> LIFI
 
 uint8_t rxData;
+uint8_t rxData_b;
 uint8_t txData;
 unsigned char uart_busy;
 unsigned char uart_back;
+unsigned char is_at = 0;
 
 int fputc(int ch, FILE *f)
 {
@@ -117,7 +122,24 @@ void uart_echo(uint8_t ch)
   else 
     qo_insert(ch);
 }
-
+// UART2 <---> BT
+void UART2_Init(void)
+{
+  huart2.Instance = USART2;
+  huart2.Init.BaudRate = 115200;
+  huart2.Init.WordLength = UART_WORDLENGTH_8B;
+  huart2.Init.StopBits = UART_STOPBITS_1;
+  huart2.Init.Parity = UART_PARITY_NONE;
+  huart2.Init.Mode = UART_MODE_TX_RX;
+  huart2.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+  huart2.Init.OverSampling = UART_OVERSAMPLING_16;
+  
+  if (HAL_UART_Init(&huart2) != HAL_OK)
+  {
+    //Error_Handler();
+  }
+  HAL_UART_Receive_IT(&huart2, btBuf, 1);
+}
 
 // UART3 <---> PC
 void UART3_Init(void)
@@ -127,7 +149,7 @@ void UART3_Init(void)
   q_init();
   /* USART3 Init */
   huart3.Instance = USART3;
-  huart3.Init.BaudRate = 115200;
+  huart3.Init.BaudRate = 921600;
   huart3.Init.WordLength = UART_WORDLENGTH_8B;
   huart3.Init.StopBits = UART_STOPBITS_1;
   huart3.Init.Parity = UART_PARITY_NONE;
@@ -160,11 +182,136 @@ void UART4_Init(void)
   HAL_UART_Receive_IT(&huart4, macBuf, 4);
 }
 
+// UART5 <---> LIFI
+void UART5_Init(void)
+{
+  huart5.Instance = UART5;
+  huart5.Init.BaudRate = 38400;
+  huart5.Init.WordLength = UART_WORDLENGTH_8B;
+  huart5.Init.StopBits = UART_STOPBITS_1;
+  huart5.Init.Parity = UART_PARITY_NONE;
+  huart5.Init.Mode = UART_MODE_TX_RX;
+  huart5.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+  huart5.Init.OverSampling = UART_OVERSAMPLING_16;
+  if (HAL_UART_Init(&huart5) != HAL_OK)
+  {
+    // Error_Handler();
+  }
+}
+
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
   struct task task;
+  unsigned char t_char;
   
-  if (huart->Instance == huart3.Instance)
+  // BT
+  if(huart->Instance == huart2.Instance) {
+    
+    /*
+    t_char = btBuf[bt_index];
+    printf("%c", t_char);
+    HAL_UART_Receive_IT(&huart2, btBuf + bt_index, 1);
+    return;
+    */
+    
+    t_char = btBuf[bt_index];
+    switch(bt_state) {
+    case 0:
+      if(t_char == 'O') { bt_state = 1;     bt_index++; }
+      else if(t_char == 'A') {bt_state = 1; bt_index++; }
+      else{ bt_state = 0; HAL_UART_Receive(&huart2, btBuf + bt_index + 1, t_char - 1, 1000); bt_index = 0; 
+      frame_queue_insert(btBuf); 
+      }
+      break;
+    case 1:
+      if(t_char == 'K') { bt_state = 2;     bt_index++;}
+      else if(t_char == 'T') { bt_state = 2; bt_index++; is_at = 1;}
+      break;
+    case 2:
+      if(t_char == '+') { bt_state = 3;  bt_index++;}
+      break;
+    case 3:
+      // AT
+      if(is_at) {
+        // AT+CON
+        if(t_char == 'C') {
+          bt_state = 0; HAL_UART_Receive(&huart2, btBuf + bt_index + 1, 14, 1000); bt_index = 0;
+        }
+        else {
+          bt_state = 0; HAL_UART_Receive(&huart2, btBuf + bt_index + 1, 4, 1000); bt_index = 0;
+        }
+        is_at = 0;
+      }
+      // OK
+      else {
+        // SET, START
+        if(t_char == 'S') { 
+          bt_state = 4; 
+          bt_index++;
+        }
+        // OK+ADDR:
+        else if(t_char == 'A') { bt_state = 0; HAL_UART_Receive(&huart2, btBuf + bt_index + 1, 16, 1000); bt_index = 0; }
+        
+        // OK+LOST
+        else if(t_char == 'L') { bt_state = 0; HAL_UART_Receive(&huart2, btBuf + bt_index + 1, 3, 1000); bt_index = 0; 
+        
+        STATUS_TABLE[CONNECT_STATUS][BLUETOOTH] = DISCON;
+        task.fun = task_bt_update;
+        strcpy(task.arg, "1");
+        task_insert(&task);
+        }
+        // OK+CONN
+        else if(t_char == 'C') { 
+          HAL_UART_Receive(&huart2, btBuf + bt_index + 1, 4, 1000); 
+          t_char = btBuf[7];
+          // OK+CONN:      ADDR
+          if(t_char == ':') {
+            bt_index += 4;
+            HAL_UART_Receive(&huart2, btBuf + bt_index + 1, 12, 1000);
+            STATUS_TABLE[CONNECT_STATUS][BLUETOOTH] = CON;
+            task.fun = task_bt_update;
+            strcpy(task.arg, "0");
+            task_insert(&task);
+            
+          }
+          bt_state = 0; 
+          bt_index = 0;
+        }
+        // OK+DISKS
+        else if(t_char == 'D') { bt_state = 0; HAL_UART_Receive(&huart2, btBuf + bt_index + 1, 4, 1000); bt_index = 0; }
+        // OK+RESET
+        else if(t_char == 'R') { bt_state = 0; HAL_UART_Receive(&huart2, btBuf + bt_index + 1, 4, 1000); bt_index = 0; }
+        else { }
+      }
+      break;
+    case 4:
+      // OK+Set:X
+      if(t_char == 'e') {
+        HAL_UART_Receive(&huart2, btBuf + bt_index + 1, 3, 1000);  
+        bt_state = 0; 
+        bt_index = 0;
+      }
+      // OK+START
+      else if(t_char == 'T') {
+        HAL_UART_Receive(&huart2, btBuf + bt_index + 1, 3, 1000);
+        bt_state = 0; 
+        bt_index = 0;
+      }
+      else {}
+      break;
+    }
+    HAL_UART_Receive_IT(&huart2, btBuf + bt_index, 1);
+    
+    /*
+    dataLength = btBuf[0];
+    HAL_UART_Receive(&huart2, btBuf + 1, dataLength - 1, 1000);
+    frame_queue_insert(btBuf);
+    HAL_UART_Receive_IT(&huart2, btBuf, 1);
+    */
+  }
+  
+  // CC2530
+  else if (huart->Instance == huart3.Instance)
   {
     if (rxData != ETX) {
       if (rxData == '\r')
@@ -238,7 +385,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
       }
       /*
       for (int i=0; i<macBuf[1]+5; i++)
-        printf("%02X ", macBuf[i]);
+      printf("%02X ", macBuf[i]);
       printf("\r\n");
       */
     }
@@ -249,8 +396,11 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
 {
   uint8_t ch;
-
-  if (huart->Instance == huart3.Instance)
+  
+  if (huart->Instance == huart2.Instance) {
+    printf("a");
+  }
+  else if (huart->Instance == huart3.Instance)
   {
     if ((ch = qo_delete()) == 0) {
       uart_busy = 0;
@@ -261,7 +411,7 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
     }
   }
   else  if (huart->Instance == huart4.Instance) {
-    
+    printf("a");
   }
 }
 

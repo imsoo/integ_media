@@ -21,11 +21,24 @@ unsigned char macAddr[8];
 
 unsigned char startMac(unsigned char deviceType) 
 {
+  deviceType = PAN_COORDINATOR;
   unsigned char attrValue[16] = {0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11,
   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
   
   unsigned char attrValue2[16] = {0x22, 0x22, 0x22, 0x22, 0x22, 0x22, 0x22, 0x22,
   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+  
+#define ZMAC_SHORT_ADDRESS 0x53
+#define ZMAC_EXTENDED_ADDRESS 0xE2
+#define ZMAC_ASSOCIATION_PERMIT 0x41
+#define ZMAC_RX_ON_IDLE 0x52
+#define ZMAC_AUTO_REQUEST 0x42
+#define ZMAC_BEACON_ORDER 0x47  
+  
+#define ENERGY_DETECT 0x00  
+#define ACTIVE_SCAN 0x01
+#define PASSIVE 0x02  
+#define ORPHAN 0x03
   
   // SYS_RESET_REQ
   macReset();
@@ -37,13 +50,6 @@ unsigned char startMac(unsigned char deviceType)
   // call back Enable
   utilCallbackSubCmd();
   HAL_Delay(100);
-  
-#define ZMAC_SHORT_ADDRESS 0x53
-#define ZMAC_EXTENDED_ADDRESS 0xE2
-#define ZMAC_ASSOCIATION_PERMIT 0x41
-#define ZMAC_RX_ON_IDLE 0x52
-#define ZMAC_AUTO_REQUEST 0x42
-#define ZMAC_BEACON_ORDER 0x47
   
   if(deviceType == PAN_COORDINATOR) {
     // MAC_SET_REQ [SHORT ADDRESS, EXT ADDRESS]
@@ -59,10 +65,6 @@ unsigned char startMac(unsigned char deviceType)
     HAL_Delay(100);
     
     // MAC_SCAN_REQ
-#define ENERGY_DETECT 0x00  
-#define ACTIVE_SCAN 0x01
-#define PASSIVE 0x02  
-#define ORPHAN 0x03
     macScanReq(ACTIVE_SCAN);
     HAL_Delay(100);
     
@@ -383,6 +385,7 @@ void macAssociateReq()
 #define MAC_DATA_REQ_PAYLOAD_LEN 0x1C
 unsigned char macDataReq(unsigned char* dest_addr, unsigned char* data, int data_length)
 {
+  //printf("[CC2530] 전송 시도\r\n");
   macBuf[0] = MAC_DATA_REQ_PAYLOAD_LEN + data_length;
   macBuf[1] = MSB(MAC_DATA_REQ);
   macBuf[2] = LSB(MAC_DATA_REQ);
