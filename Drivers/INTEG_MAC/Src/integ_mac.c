@@ -91,12 +91,14 @@ void integ_mac_handler(void * arg)
       if(frame_state == TRANSMIT_FRAME) {
         cur_media = frame->media_type;
         
+        
         // 재전송 프레임인 경우 최적의 매체로 전송
         if((cur_media & OPT_MEDIA) == OPT_MEDIA) {
           prev_media = cur_media & 0x0F;
           
           // ackNumber 필드 를 재전송한 횟수로 사용한다. (임시)
           frame->ackNumber++;
+<<<<<<< HEAD
           
           // 재전송 대기열의 프레임 추가
           re_frame_queue_insert((unsigned char *)frame);
@@ -113,6 +115,23 @@ void integ_mac_handler(void * arg)
           }
           frame->media_type = OPT_MEDIA | cur_media;
           
+=======
+          
+          cur_media = prev_media;
+          // 재전송 횟수가 3회이면 매체 연결 상태 끊김으로 변경
+          if(frame->ackNumber >= RETRANSMIT_NUM) {
+            // 이전 전송 매체 연결 상태 변경
+            STATUS_TABLE[CONNECT_STATUS][prev_media] = DISCON;
+            integ_find_opt_link(NULL);
+            cur_media = opt_media;
+          }
+          frame->media_type = OPT_MEDIA | cur_media;
+          
+          // 재전송 대기열의 프레임 추가
+          re_frame_queue_insert((unsigned char *)frame);
+          sprintf(message_buffer, "* [%s] %d 번 데이터 전송 실패 \r\n", media_name[prev_media], frame->ackNumber);
+          insert_display_message(message_buffer);
+>>>>>>> 9a8baaaeeed4b1f29561da2649734bab490f5100
           
           if(prev_media != cur_media) {
             //sprintf(message_buffer, "* [INTEG][%s] 에서 [%s] 으로 매체 변경 \r\n",  media_name[prev_media],  media_name[cur_media]);
@@ -440,7 +459,11 @@ void integ_find_opt_link(void * arg)
   // 주기적인 TASK 삽입
   task.fun = integ_find_opt_link;
   strcpy(task.arg, "");
+<<<<<<< HEAD
   //insert_timer(&task, FIND_OPT_PERIOD);
+=======
+  insert_timer(&task, FIND_OPT_PERIOD);
+>>>>>>> 9a8baaaeeed4b1f29561da2649734bab490f5100
   
   for(i = 0; i < MEDIA_NUM; i++) {
     if(STATUS_TABLE[INIT_STATUS][i] && STATUS_TABLE[CONNECT_STATUS][i]) {
@@ -449,6 +472,7 @@ void integ_find_opt_link(void * arg)
       //printf("최적매체 : %s\r\n", media_name[opt_media]);
     }
   }
+<<<<<<< HEAD
   
   // 연결된 매체가 없는 경우
   if(i == MEDIA_NUM) {
@@ -467,6 +491,11 @@ void integ_find_opt_link(void * arg)
   else {
     
   }
+=======
+  //opt_media = (rand() % 2) + 1;
+  opt_media = (opt_media + 1) % 2 + 1;
+  
+>>>>>>> 9a8baaaeeed4b1f29561da2649734bab490f5100
   
 }
 
