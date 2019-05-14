@@ -14,14 +14,14 @@ gpio.c
 void GPIO_Init(void)
 {
   GPIO_InitTypeDef GPIO_InitStruct = {0};
-
+  
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
   __HAL_RCC_GPIOC_CLK_ENABLE();
   __HAL_RCC_GPIOD_CLK_ENABLE();
   __HAL_RCC_GPIOH_CLK_ENABLE();
-
+  
   // CC2530 RESET_PIN
   /*Configure GPIO pin : PC9 */
   GPIO_InitStruct.Pin = GPIO_PIN_9;
@@ -55,11 +55,11 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
         //printf("BT disconnected\r\n");
         // BT Àç¿¬°á
         if(bt_dis_count > 4) {
-        struct task task;
-        task.fun = task_connect;
-        strcpy(task.arg, "");
-        task_insert(&task);
-        bt_dis_count = 0;
+          struct task task;
+          task.fun = task_connect;
+          strcpy(task.arg, "");
+          task_insert(&task);
+          bt_dis_count = 0;
         }
       }
     }

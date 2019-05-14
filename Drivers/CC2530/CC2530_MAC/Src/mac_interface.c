@@ -1,7 +1,7 @@
+#include <string.h>                 //for memcpy()
 #include "mac_interface.h"
 #include "mac_interface_uart.h"
 #include "stm32f4xx_hal.h"
-#include <string.h>                 //for memcpy()
 #include "integ_mac.h"
 
 /** Get the Least Significant Byte (LSB) of an unsigned int*/
@@ -17,7 +17,8 @@
 
 #define PAN_COORDINATOR 0x00
 
-unsigned char macAddr[8];
+unsigned char cc2530_mac_addr[8];
+unsigned char cc2530_broadcast_addr[8] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 
 unsigned char startMac(unsigned char deviceType) 
 {
@@ -51,13 +52,14 @@ unsigned char startMac(unsigned char deviceType)
   utilCallbackSubCmd();
   HAL_Delay(100);
   
+  // mtUtilGetPrimaryIEEE
+  mtUtilGetPrimaryIEEE();
+  
   if(deviceType == PAN_COORDINATOR) {
     // MAC_SET_REQ [SHORT ADDRESS, EXT ADDRESS]
     // set the parameter
-    attrValue[0] = LSB(STM32_UUID[0]);
-    macSetReq(ZMAC_SHORT_ADDRESS, attrValue);
-    macSetReq(ZMAC_EXTENDED_ADDRESS, attrValue);
-    memcpy(macAddr, attrValue, 8);
+    macSetReq(ZMAC_SHORT_ADDRESS, cc2530_mac_addr);
+    macSetReq(ZMAC_EXTENDED_ADDRESS, cc2530_mac_addr);
     
     // auto request false;
     attrValue[0] = 0x00;
@@ -281,7 +283,7 @@ void macAssociateRsp(void *arg)
   // wait MAC_COMM_STATUS_IND
   sreqFlag = STATE_ASSOCIATE_RSP_CNF;
   while(sreqFlag != STATE_IDLE);
-
+  
   printf("AssociateRsp\r\n$ ");
 }
 
@@ -405,7 +407,7 @@ unsigned char macDataReq(unsigned char* dest_addr, unsigned char* data, int data
     macBuf[12] = 0x2E;
     macBuf[13] = 0x2E;
   }
-
+  
   /*
   macBuf[12] = 0xFF;
   macBuf[13] = 0xFF;
@@ -617,9 +619,30 @@ void macScanReq(unsigned char scanType)
     stateFlag = STATE_SYNC;
 }
 
-void getMacAddr_CC2530(unsigned char * addr)
+
+#define MT_UTIL_GET_PRIMARY_IEEE 0x27EF
+#define MT_UTIL_GET_PRIMARY_IEEE_PAYLOAD_LEN 0x01;
+void mtUtilGetPrimaryIEEE()
 {
-  memcpy(addr, macAddr, 8);
+  macBuf[0] = MT_UTIL_GET_PRIMARY_IEEE_PAYLOAD_LEN;
+  macBuf[1] = MSB(MT_UTIL_GET_PRIMARY_IEEE);
+  macBuf[2] = LSB(MT_UTIL_GET_PRIMARY_IEEE);
+  
+  macBuf[3] = 0x00;
+  
+  uartSreq(STATE_SREQ);
+  memcpy(cc2530_mac_addr, macBuf + 1, 8);
+  cc2530_mac_addr[0] = LSB(STM32_UUID[0]);
+}
+
+unsigned char* cc2530_get_mac_addr(unsigned char addr_type) {
+  
+  if (addr_type == BROADCAST_ADDR) {
+    return cc2530_broadcast_addr;
+  }
+  else {
+    return cc2530_mac_addr;
+  }
 }
 
 void printMacBuf()

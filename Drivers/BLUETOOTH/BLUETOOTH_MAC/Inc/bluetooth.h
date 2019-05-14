@@ -14,6 +14,7 @@ void BT_M_Init();
 void BT_S_Init();
 void task_bt_update(void *arg);
 void task_connect(void *arg);
+unsigned char* bt_get_mac_addr(unsigned char addr_type);
 
 // AT 커맨더 진입
 void BT_AT();

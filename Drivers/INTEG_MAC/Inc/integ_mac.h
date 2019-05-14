@@ -27,6 +27,7 @@ extern unsigned char STATUS_TABLE[STATUS_NUM][MEDIA_NUM];
 
 #define FIND_OPT_PERIOD 5 // 최적 노드 검색 주기 500ms
 #define RETRANSMIT_TIME 3      // 재전송 주기 300ms
+#define RETRANSMIT_NUM 3      // 재전송 횟수
 #define R_SUCCESS 1
 #define R_FAIL 0
 static char *result_string[2] = {"FAIL", "SUCCESS"};
@@ -35,6 +36,7 @@ static char *result_string[2] = {"FAIL", "SUCCESS"};
 #define LIFI_ADDR_LEN 6     // lifi 맥 주소 길이
 #define BLUETOOTH_ADDR_LEN 6     // BLUETOOTH 맥 주소 길이
 #define CC2530_ADDR_LEN 8     // CC2530 맥 주소 길이
+#define MEDIA_ADDR_LEN_MAX 8    // 각 매체 주소중 길이가장 긴 값
 static unsigned char media_addr_len[MEDIA_NUM] = {LIFI_ADDR_LEN, BLUETOOTH_ADDR_LEN, CC2530_ADDR_LEN};
 
 #define INTEG_FRAME_HEADER_LEN 17 // 통합 맥 프레임 헤더 길이
@@ -46,6 +48,8 @@ static unsigned char media_addr_len[MEDIA_NUM] = {LIFI_ADDR_LEN, BLUETOOTH_ADDR_
 // messageType
 #define DATA_MSG 0x01
 #define ACK_MSG 0x02
+#define ADV_MSG 0x04
+#define ADV_IND 0x05
 #define PASS_MSG 0xFF
 
 // deviceType
@@ -58,18 +62,19 @@ extern unsigned char my_integ_address[INTEG_ADDR_LEN];
 extern unsigned char hood_integ_address[INTEG_ADDR_LEN];
 
 #define MAX_SEQ_NUMBER 10                   // 순서 번호 최대
-#define DEFAULT_SEQ_NUMBER 1            // 순서 번호 초기값
+#define DEFAULT_SEQ_NUMBER 0            // 순서 번호 초기값
 extern unsigned char seqNumber;         // 순서 번호
 
 #define STATIC_ADDR 0
 #define DYNAMIC_ADDR 1
 static char *addr_type_name[2] = {"STATIC", "DYNAMIC"};
 
+
 // 통합 MAC 테이블 구조체
 typedef struct integ_table {
   unsigned char integ_addr[INTEG_ADDR_LEN];
   unsigned char addr_type; // static : 0, dynamic : 1
-  unsigned char *media_addr[MEDIA_NUM];
+  unsigned char media_addr[MEDIA_NUM][MEDIA_ADDR_LEN_MAX];
 } INTEG_TABLE;
 
 
@@ -85,12 +90,18 @@ typedef struct integ_frame {
   unsigned char data[INTEG_FRAME_DATA_LEN];
 } INTEG_FRAME;
 
+extern INTEG_FRAME advertising_frame;
+
 unsigned char get_seq_number(void);
 void integ_mac_handler(void * arg);
 void integ_retransmit_handler(void * arg);
 void integ_find_opt_link(void *);
 void integ_mac_init(void);
 void integ_print_frame(INTEG_FRAME *frame);
+
+#define MAC_ADDR 0x00
+#define BROADCAST_ADDR 0xFF
+unsigned char* integ_get_mac_addr(unsigned char addr_type);
 
 /** Get the Least Significant Byte (LSB) of an unsigned int*/
 #define LSB(num) ((num) & 0xFF)

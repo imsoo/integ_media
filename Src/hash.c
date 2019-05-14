@@ -112,7 +112,7 @@ void PrintAllHashData()
 void PrintHashData(struct node *t_node)
 {
   int i, j;
-  printf("\r\n** Integ Addr : ");
+  printf("** Integ Addr : ");
   for(i = 0; i < INTEG_ADDR_LEN; i++) {
     printf("%02X ", (t_node->data).integ_addr[i]);
   }
@@ -125,5 +125,5 @@ void PrintHashData(struct node *t_node)
     }
     printf("\r\n");
   }
-  printf("\r\n-----------\r\n");
+  printf("-----------\r\n");
 }

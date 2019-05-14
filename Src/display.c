@@ -9,7 +9,7 @@ display.c
 
 unsigned char display_buffer_index = 0;
 unsigned char new_line[2] = {'\r', '\n'};
-unsigned char display_buffer[ROW_LINES][COL_NUMS];
+char display_buffer[ROW_LINES][COL_NUMS];
 unsigned char *media_name_for_display[MEDIA_NUM] = {"  LI-FI   ", "BLUETOOTH ", " CC2530    "};
 unsigned char rectange1[COL_NUMS] = {"┏━━━━━┓      ┏━━━━━┓      ┏━━━━━┓\r\n"};
 unsigned char rectange1_1[COL_NUMS] = {"┃          ┃      ┏━━━━━┓      ┏━━━━━┓\r\n"};
@@ -38,7 +38,7 @@ void print_info(void *arg)
   int i;
   printf("\033[2J");
   //printf("\033[%d;%dH\r\n", 0, 0);
-  printf("                 ** 매체 연결 정보 **                    ** 현재 최적 매체 **\r\n");
+  printf("                 ** 매체 연결 정보 **                    \r\n");
   for(i = 0; i < MEDIA_NUM; i++) {
     if(i == 0) {
     printf("%s", rectange1);
@@ -82,9 +82,13 @@ void print_info(void *arg)
   }
 }
 
-void insert_display_message(unsigned char *message)
+void insert_display_message(int message_type, char *message)
 {
-  strcpy(display_buffer[display_buffer_index], message);
+  char message_buffer[MSG_HEADER_LENGTH];
+  sprintf(message_buffer, "* [%s] : ", str_message[message_type]);
+  
+  strncpy(display_buffer[display_buffer_index], message_buffer, MSG_HEADER_LENGTH);
+  strcpy(display_buffer[display_buffer_index] + MSG_HEADER_LENGTH, message);
   display_buffer_index = (display_buffer_index + 1) % ROW_LINES;
   display();
 }
@@ -94,6 +98,7 @@ void print_message(void *arg)
   int row, col;
   printf("                 ** 메시지  정보  **\r\n"); 
 
+  
   /*
   for(row = ROW_LINES - 1; row > display_buffer_index; row--) {  
       printf("%s", display_buffer[row]);
@@ -102,6 +107,7 @@ void print_message(void *arg)
     printf("%s", display_buffer[row]);
   }
   */
+  
   
   for(row = display_buffer_index; row < ROW_LINES; row++) {  
       printf("%s", display_buffer[row]);

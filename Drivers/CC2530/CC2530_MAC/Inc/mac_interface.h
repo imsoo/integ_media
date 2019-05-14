@@ -14,4 +14,5 @@ void macSetReq(unsigned char attr, unsigned char *attrValue);
 void macScanReq(unsigned char scanType);
 void printMacBuf();
 void utilCallbackSubCmd();
-void getMacAddr_CC2530(unsigned char * addr);
+void mtUtilGetPrimaryIEEE();
+unsigned char* cc2530_get_mac_addr(unsigned char addr_type);

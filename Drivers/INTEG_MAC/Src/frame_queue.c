@@ -47,7 +47,7 @@ void re_frame_queue_remove(unsigned char index)
   int i;
   
   // юс╫ц
-  for(i = 1; i < RE_FRAME_QUEUE_SIZE; i++) {
+  for(i = 0; i < RE_FRAME_QUEUE_SIZE; i++) {
     if(re_frame_queue[i].seqNumber == index) {
       re_frame_queue[i].message_type = PASS_MSG;
     }

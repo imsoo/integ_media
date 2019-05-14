@@ -43,7 +43,7 @@ int task_delete(struct task *tskp)
 
 void task_cmd(void *arg)
 {
-  char buf[64], *cp0, *cp1, *cp2;
+  char buf[64], *cp0, *cp1;
   int deviceType = 0;
   if (fgets(buf, 64, stdin) == NULL) {
     display();
@@ -55,27 +55,32 @@ void task_cmd(void *arg)
   // 아무것도 입력안한 경우
   if (cp0 == NULL) {
     //printf("$ ");
-    insert_display_message("* [SYSTEM] \r\n");
+    insert_display_message(SYSTEM_MSG, "!!!-Usage : \r\n");
     display();
     return;
   }
-  else if(!strcmp(cp0, "info")) {
-    //PrintAllHashData();
-    //print_uart_state();
-    BT_CONNET();
+  else if(!strcmp(cp0, "t")) {  // test
+    frame_queue_insert((unsigned char *)&advertising_frame);
   }
-  else if(!strcmp(cp0, "s")) {
+  else if(!strcmp(cp0, "info")) {
+    PrintAllHashData();
+    HAL_Delay(3000);
+  }
+  else if(!strcmp(cp0, "s")) {  // send
     INTEG_FRAME frame;
     frame.frame_length = INTEG_FRAME_HEADER_LEN + 0x06;
     memcpy(frame.src_address, my_integ_address, INTEG_ADDR_LEN); 
     memcpy(frame.dest_address, hood_integ_address, INTEG_ADDR_LEN); 
-    frame.media_type = cur_media;
+    integ_find_opt_link(NULL);
+    //frame.media_type = cur_media;
+    frame.media_type = opt_media;
     frame.message_type = DATA_MSG;
     frame.data[0] = 0x48;
     frame.data[1] = 0x65;
     frame.data[2] = 0x6c;
     frame.data[3] = 0x6c;
     frame.data[4] = 0x6f;
+    frame.ackNumber = 0;
     frame.seqNumber = get_seq_number();
     frame.data[5] = frame.seqNumber + 0x30;
     frame_queue_insert((unsigned char *)&frame);
@@ -97,7 +102,7 @@ void task_cmd(void *arg)
   }
   // 잘못된 명령어 입력한 경우 
   else {
-    insert_display_message("* [SYSTEM] !!!-Wrong command\r\n");
+    insert_display_message(SYSTEM_MSG, "!!!-Wrong command\r\n");
     //printf("* [SYSTEM] !!!-Wrong command\r\n");
   }
   display();

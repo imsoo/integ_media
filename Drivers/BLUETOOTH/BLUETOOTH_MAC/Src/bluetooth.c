@@ -2,11 +2,16 @@
 bluetooth.c
 */
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>     //for strncmp
 #include "stm32f4xx_hal.h"
 #include "integ_mac.h"
 #include "uart.h"
 #include "bluetooth.h"
+#include "display.h"
+
+unsigned char bt_mac_addr[8];
+unsigned char bt_broadcast_addr[8] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 unsigned char bt_state;
 unsigned char bt_index;
 unsigned char bt_count;
@@ -108,11 +113,15 @@ void task_bt_update(void *arg)
 {
   // AT
   if(strncmp((char*)arg, "1", 1)) {
-    insert_display_message("* [BLUETOOTH] ¿¬°á µÊ\r\n"); 
+    insert_display_message(INTEG_MSG, "[BLUETOOTH] ¿¬°á µÊ\r\n"); 
+    STATUS_TABLE[CONNECT_STATUS][BLUETOOTH] = CON;
   }
   else {
-    insert_display_message("* [BLUETOOTH] ¿¬°á ²÷±è\r\n"); 
+    insert_display_message(INTEG_MSG, "[BLUETOOTH] ¿¬°á ²÷±è\r\n"); 
+    STATUS_TABLE[CONNECT_STATUS][BLUETOOTH] = DISCON;
   }
+  display();
+  integ_find_opt_link(NULL);
 }
 
 void task_connect(void *arg)
@@ -125,16 +134,16 @@ void task_connect(void *arg)
 // BlueTooth Init
 // Master
 void BT_M_Init()
-{
+{  
   // BAUD
   HAL_UART_Transmit(&huart2, SET_BAUD, 8, 1000);
   HAL_Delay(100);
   
   // AT
-  //HAL_UART_Transmit(&huart2, AT, 2, 1000);
+  HAL_UART_Transmit(&huart2, AT, 2, 1000);
   HAL_Delay(100);  
   
-  // MODE 2
+  // MODE 0
   HAL_UART_Transmit(&huart2, SET_MODE, 8, 1000);
   HAL_Delay(100);
   
@@ -158,23 +167,28 @@ void BT_M_Init()
   HAL_UART_Transmit(&huart2, BT_START1, 8, 1000);
   HAL_Delay(100);
   
+  // QR_MAC
+  HAL_UART_Transmit(&huart2, QR_MAC_ADDRESS, 8, 1000);
+  HAL_Delay(100);
+  
+  
+  // ÁÖ¼Ò ÀúÀå
+  char temp[2];
+  int index;
+  for (index = 0; index < BLUETOOTH_ADDR_LEN; index++) {
+    memcpy(temp, btBuf + (index * 2) + 8, 2);
+    bt_mac_addr[index] = strtol(temp, NULL, 16);
+  }
+  HAL_Delay(100);
+  
+  
   // DISC
   HAL_UART_Transmit(&huart2, SET_SCAN, 8, 1000);
   HAL_Delay(100);
   
-  memcpy(SAVE_ADDRESS, MAC1, 20);
-  
-  // QR_MAC
-  //HAL_UART_Transmit(&huart2, QR_MAC_ADDRESS, 8, 1000);
-  HAL_Delay(10);
-  
   // BT_CONNET()
   HAL_UART_Transmit(&huart2, CON_MAC2, 18, 1000);
   HAL_Delay(100);
-  
-  //HAL_UART_Transmit(&huart2, QR_MAC_ADDRESS, 8, 1000);
-  HAL_Delay(100);
-  
 }
 //Slave
 void BT_S_Init()
@@ -188,10 +202,10 @@ void BT_S_Init()
   HAL_Delay(100);
   
   // AT
-  //HAL_UART_Transmit(&huart2, AT, 2, 1000);
+  HAL_UART_Transmit(&huart2, AT, 2, 1000);
   HAL_Delay(100);
   
-  // MODE 2
+  // MODE 0
   HAL_UART_Transmit(&huart2, SET_MODE, 8, 1000);
   HAL_Delay(300);
   
@@ -211,15 +225,36 @@ void BT_S_Init()
   HAL_UART_Transmit(&huart2, SET_RESET, 8, 1000);
   HAL_Delay(10);
   
+  // SET START
+  //HAL_UART_Transmit(&huart2, BT_START1, 8, 1000);
+  HAL_Delay(100);
+  
   // DISC
-  //HAL_UART_Transmit(&huart2, SET_SCAN, 8, 1000);
+  // HAL_UART_Transmit(&huart2, SET_SCAN, 8, 1000);
   HAL_Delay(100);
   
   // QR_MAC
   HAL_UART_Transmit(&huart2, QR_MAC_ADDRESS, 8, 1000);
-  HAL_Delay(10);
+  HAL_Delay(100);
   
-  memcpy(SAVE_ADDRESS, MAC2, 20);
+  
+  // ÁÖ¼Ò ÀúÀå
+  char temp[2];
+  int index;
+  for (index = 0; index < BLUETOOTH_ADDR_LEN; index++) {
+    memcpy(temp, btBuf + (index * 2) + 8, 2);
+    bt_mac_addr[index] = strtol(temp, NULL, 16);
+  }
+  HAL_Delay(100);
+}
+
+unsigned char* bt_get_mac_addr(unsigned char addr_type) {
+  if (addr_type == BROADCAST_ADDR) {
+    return bt_broadcast_addr;
+  }
+  else {
+    return bt_mac_addr;
+  }
 }
 
 // AT Ä¿¸Ç´õ ÁøÀÔ

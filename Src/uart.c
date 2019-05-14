@@ -310,7 +310,6 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
     */
   }
   
-  // CC2530
   else if (huart->Instance == huart3.Instance)
   {
     if (rxData != ETX) {
@@ -330,6 +329,8 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
       task_insert(&task);
     }
   }
+  
+  // CC2530
   else if (huart->Instance == huart4.Instance) {
     
     if(macBuf[1] != 0x00)
