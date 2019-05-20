@@ -7,8 +7,8 @@
 
 #include "queue.h"
 
-#define QO_SIZE 512
-#define QI_SIZE 512
+#define QO_SIZE 1024
+#define QI_SIZE 1024
 unsigned char qo[QO_SIZE], qi[QI_SIZE];
 unsigned int fi, ri, fo, ro;
 

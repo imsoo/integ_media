@@ -45,15 +45,19 @@
 #include "task.h"
 #include "timer.h"
 #include "integ_mac.h"
+#include "display.h"
 
 void SystemClock_Config(void);
 
+<<<<<<< HEAD
 //LI-FI data
 uint8_t rx3_data[7];
 uint8_t tx_data[21]="i can speak english\n";
 char ack_data[5];
 int index,ack=0;
 
+=======
+>>>>>>> f4ef9cf935189d0c5750c19dd64f38adf4570242
 int main(void)
 {
   int tag;
@@ -63,15 +67,18 @@ int main(void)
   SystemClock_Config();
   GPIO_Init();
   MX_TIM6_Init();
+  UART2_Init(); // BT
   UART3_Init(); // PC
-  UART4_Init();
+  UART4_Init(); // CC2530
+  UART5_Init(); // LIFI
   HAL_Delay(500);
+
+  init_display_buffer();
   
   integ_mac_init();
 
-
-  printf("$ ");
   while(1) {
+<<<<<<< HEAD
     index=index%sizeof(tx_data);
        
     HAL_UART_Transmit(&huart5,&tx_data[index++],1,1);
@@ -87,6 +94,8 @@ int main(void)
      continue;
    }
 
+=======
+>>>>>>> f4ef9cf935189d0c5750c19dd64f38adf4570242
     __disable_interrupt();
     tag = task_delete(&task);
     __enable_interrupt();
@@ -100,6 +109,7 @@ int main(void)
   * @brief System Clock Configuration
   * @retval None
   */
+<<<<<<< HEAD
 
  //LI-FI callback function
  
@@ -113,6 +123,8 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
     }
 }
 
+=======
+>>>>>>> f4ef9cf935189d0c5750c19dd64f38adf4570242
 void SystemClock_Config(void)
 {
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
