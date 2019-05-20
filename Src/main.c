@@ -49,8 +49,10 @@
 void SystemClock_Config(void);
 
 //LI-FI data
-uint8_t rx3_data;
-uint8_t tx_data[5]="hello";
+uint8_t rx3_data[7];
+uint8_t tx_data[21]="i can speak english\n";
+char ack_data[5];
+int index,ack=0;
 
 int main(void)
 {
@@ -70,15 +72,20 @@ int main(void)
 
   printf("$ ");
   while(1) {
-
-
-/////////////LI-FI//////////////////////////
-//send "HELLO from huart5 to huart3"
-/*
-     HAL_UART_Transmit(&huart5,tx_data,5,1000);
-    HAL_Delay(1000);
-*/
-//////////////Li-FI/////////////////////////
+    index=index%sizeof(tx_data);
+       
+    HAL_UART_Transmit(&huart5,&tx_data[index++],1,1);
+    HAL_Delay(10);
+    HAL_UART_Receive_IT(&huart5,rx3_data,1);    
+   if(flag)
+   {   
+    
+     
+     HAL_UART_Transmit(&huart3,rx3_data,sizeof(rx3_data),1);
+     
+     flag=0;
+     continue;
+   }
 
     __disable_interrupt();
     tag = task_delete(&task);
@@ -95,16 +102,17 @@ int main(void)
   */
 
  //LI-FI callback function
- /*
- void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+ 
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
-    if(huart->Instance ==USART3)
+
+    if(huart->Instance == UART5)
     {
-      HAL_UART_Receive_IT(&huart3,&rx3_data,5);
-      HAL_UART_Transmit(&huart3,&rx3_data,5,10);
+     flag = 1;
+     HAL_UART_Receive_IT(&huart5,rx3_data,1);
     }
 }
-*/
+
 void SystemClock_Config(void)
 {
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
