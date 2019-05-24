@@ -452,7 +452,11 @@ unsigned char macDataReq(unsigned char* dest_addr, unsigned char* data, int data
   macBuf[30] = data_length;  
   
   // MSDU
-  memcpy(macBuf+31, data, data_length);
+  //memcpy(macBuf+31, data, data_length);
+  
+  memcpy(macBuf+31, data, INTEG_FRAME_HEADER_LEN);
+  memcpy(macBuf+31 + INTEG_FRAME_HEADER_LEN, ((INTEG_FRAME*) data)->data, data_length - INTEG_FRAME_HEADER_LEN);
+
   
   uartSreq(STATE_SREQ);
   

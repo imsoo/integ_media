@@ -44,13 +44,14 @@ int task_delete(struct task *tskp)
 void task_cmd(void *arg)
 {
   char buf[64], *cp0, *cp1;
-  int deviceType = 0;
+  int deviceType = 0, msg_len = 0;
+  INTEG_FRAME frame;
   if (fgets(buf, 64, stdin) == NULL) {
     display();
     return;
   }
   cp0 = strtok(buf, " \t\n\r");
-  cp1 = strtok(NULL, " \t\n\r");
+  cp1 = strtok(NULL, "\t\n\r");
   
   // 아무것도 입력안한 경우
   if (cp0 == NULL) {
@@ -60,31 +61,50 @@ void task_cmd(void *arg)
     return;
   }
   else if(!strcmp(cp0, "t")) {  // test
-    frame_queue_insert((unsigned char *)&advertising_frame);
+    frame.frame_length = INTEG_FRAME_HEADER_LEN + 0x78;
+    memcpy(frame.src_address, my_integ_address, INTEG_ADDR_LEN); 
+    memcpy(frame.dest_address, hood_integ_address, INTEG_ADDR_LEN); 
+    integ_find_opt_link(NULL);
+    frame.media_type = opt_media;
+    frame.message_type = DATA_MSG;
+
+    frame.ackNumber = 0;
+    frame.seqNumber = get_seq_number();
+    frame.data = testBuf_2;
+    frame_queue_insert((unsigned char *)&frame);
   }
   else if(!strcmp(cp0, "info")) {
     PrintAllHashData();
     HAL_Delay(3000);
   }
   else if(!strcmp(cp0, "s")) {  // send
-    INTEG_FRAME frame;
-    frame.frame_length = INTEG_FRAME_HEADER_LEN + 0x06;
+    frame.frame_length = INTEG_FRAME_HEADER_LEN;
     memcpy(frame.src_address, my_integ_address, INTEG_ADDR_LEN); 
     memcpy(frame.dest_address, hood_integ_address, INTEG_ADDR_LEN); 
     integ_find_opt_link(NULL);
     //frame.media_type = cur_media;
     frame.media_type = opt_media;
     frame.message_type = DATA_MSG;
-    frame.data[0] = 0x48;
-    frame.data[1] = 0x65;
-    frame.data[2] = 0x6c;
-    frame.data[3] = 0x6c;
-    frame.data[4] = 0x6f;
+
     frame.ackNumber = 0;
     frame.seqNumber = get_seq_number();
-    frame.data[5] = frame.seqNumber + 0x30;
+    frame.data = testBuf_2;
     frame_queue_insert((unsigned char *)&frame);
     //macDataReq(broadcast_addr, &frame, frame.frame_length);
+  }
+  else if (!strcmp(cp0, "send")) {
+    msg_len = strlen(cp1);
+    frame.frame_length = INTEG_FRAME_HEADER_LEN + msg_len;
+    memcpy(frame.src_address, my_integ_address, INTEG_ADDR_LEN); 
+    memcpy(frame.dest_address, hood_integ_address, INTEG_ADDR_LEN); 
+    integ_find_opt_link(NULL);
+    //frame.media_type = cur_media;
+    frame.media_type = opt_media;
+    frame.message_type = 0X45;
+    memcpy(frame.data, cp1, msg_len);
+    frame.ackNumber = 0;
+    frame.seqNumber = get_seq_number();
+    frame_queue_insert((unsigned char *)&frame);
   }
   else if (!strcmp(cp0, "init")) {
     // 추가 인자 입력하지 않은 경우

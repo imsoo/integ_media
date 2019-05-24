@@ -95,7 +95,7 @@ void insert_display_message(int message_type, char *message)
 
 void print_message(void *arg)
 {
-  int row, col;
+  int row;
   printf("                 ** 메시지  정보  **\r\n"); 
 
   

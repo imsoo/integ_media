@@ -16,6 +16,8 @@ uart.c
 #include "frame_queue.h"
 #include "display.h"
 #include "timer.h"
+#include "lifi.h"
+#include "mem_pool.h"
 
 #define ETX 0x04
 
@@ -32,6 +34,8 @@ UART_HandleTypeDef huart2;      // <---> BT
 UART_HandleTypeDef huart3;      // <---> PC
 UART_HandleTypeDef huart4;      // <---> CC2530
 UART_HandleTypeDef huart5;      // <---> LIFI
+
+INTEG_FRAME uart_frame;
 
 uint8_t rxData;
 uint8_t rxData_b;
@@ -149,7 +153,7 @@ void UART3_Init(void)
   q_init();
   /* USART3 Init */
   huart3.Instance = USART3;
-  huart3.Init.BaudRate = 921600;
+  huart3.Init.BaudRate = 115200;
   huart3.Init.WordLength = UART_WORDLENGTH_8B;
   huart3.Init.StopBits = UART_STOPBITS_1;
   huart3.Init.Parity = UART_PARITY_NONE;
@@ -197,6 +201,7 @@ void UART5_Init(void)
   {
     // Error_Handler();
   }
+  HAL_UART_Receive_IT(&huart5, rx3_data,1);
 }
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
@@ -220,7 +225,10 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
       if(t_char == 'O') { bt_state = 1;     bt_index++; }
       else if(t_char == 'A') {bt_state = 1; bt_index++; }
       else{ bt_state = 0; HAL_UART_Receive(&huart2, btBuf + bt_index + 1, t_char - 1, 1000); bt_index = 0; 
-      frame_queue_insert(btBuf); 
+      memcpy((unsigned char *)&uart_frame, btBuf, INTEG_FRAME_HEADER_LEN);
+      uart_frame.data = get_mem();
+      memcpy(uart_frame.data, btBuf + INTEG_FRAME_HEADER_LEN, uart_frame.frame_length - INTEG_FRAME_HEADER_LEN);
+      frame_queue_insert((unsigned char *)&uart_frame);
       }
       break;
     case 1:
@@ -330,6 +338,13 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
     }
   }
   
+  // LI-FI
+  else if (huart->Instance == huart5.Instance) {
+    l_flag = 1;
+    //HAL_UART_Transmit(&huart3, (uint8_t *)rx3_data,1,1);
+    HAL_UART_Receive_IT(&huart5,rx3_data,1);
+  }
+  
   // CC2530
   else if (huart->Instance == huart4.Instance) {
     
@@ -355,7 +370,10 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
         }
         else if(macBuf[3] == 0x85) { // MAC_DATA_IND
 #define DATA_FIELD 48
-          frame_queue_insert(macBuf + 48);
+          memcpy((unsigned char *)&uart_frame, macBuf + 48, INTEG_FRAME_HEADER_LEN);
+          uart_frame.data = get_mem();
+          memcpy(uart_frame.data, macBuf + 48 + INTEG_FRAME_HEADER_LEN, uart_frame.frame_length - INTEG_FRAME_HEADER_LEN);
+          frame_queue_insert((unsigned char *)&uart_frame);
         }
         else {
           if(macBuf[3] == 0x8C) {    // MAC_SCAN_CNF

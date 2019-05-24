@@ -39,7 +39,9 @@ unsigned char bluetooth_init(unsigned char deviceType)
 unsigned char bluetooth_send(unsigned char* dest_addr, unsigned char* data, int data_length)
 {
   //printf("[BLUETOOTH] 전송 시도\r\n");
-  HAL_UART_Transmit(&huart2, data, data_length, 1000);
+  memcpy(btBuf, data, INTEG_FRAME_HEADER_LEN);
+  memcpy(btBuf + INTEG_FRAME_HEADER_LEN, ((INTEG_FRAME*) data)->data, data_length - INTEG_FRAME_HEADER_LEN);
+  HAL_UART_Transmit(&huart2, btBuf, data_length, 1000);
   return 0;
 }
 
