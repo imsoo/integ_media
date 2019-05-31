@@ -48,6 +48,7 @@
 #include "display.h"
 #include "lifi.h"
 #include "mem_pool.h"
+#include "image.h"
 
 void SystemClock_Config(void);
 
@@ -64,9 +65,18 @@ int main(void)
   SystemClock_Config();
   GPIO_Init();
   MX_TIM6_Init();
-  UART2_Init(); // BT
+  //UART2_Init(); // BT
   UART3_Init(); // PC
-  UART4_Init(); // CC2530
+  HAL_Delay(500);
+  
+  int i;
+  HAL_UART_Transmit(&huart3, "iiiii", 5, 1000);
+  for (i = 0; i < IMAGE_LENGTH; i++) {
+    HAL_UART_Transmit(&huart3, &sample_image[i], 1, 1000);
+    HAL_Delay(30);
+  }
+  while(1);
+  //UART4_Init(); // CC2530
   //UART5_Init(); // LIFI
   HAL_Delay(500);
   

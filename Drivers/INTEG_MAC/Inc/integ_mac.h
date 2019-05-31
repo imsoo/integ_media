@@ -30,8 +30,8 @@ extern unsigned char STATUS_TABLE[STATUS_NUM][MEDIA_NUM];
 
 
 #define FIND_OPT_PERIOD 5 // 최적 노드 검색 주기 500ms
-#define RETRANSMIT_TIME 3      // 재전송 주기 300ms
-#define RETRANSMIT_NUM 3      // 3번 ACK 안오는 경우 재전송
+#define RETRANSMIT_TIME 3      // 재전송 주기 500ms
+#define RETRANSMIT_NUM 3      // 3번 ACK 안오는 경우 매체변경
 #define R_SUCCESS 1     // 실행 결과 : 성공
 #define R_FAIL 0                // 실행 결과 : 실패
 static char *result_string[2] = {"FAIL", "SUCCESS"};
@@ -61,10 +61,11 @@ static unsigned char media_addr_len[MEDIA_NUM] = {LIFI_ADDR_LEN, BLUETOOTH_ADDR_
 #define SLAVE 0x01
 
 // fragmentaion 관련
-static int media_mtu_size[MEDIA_NUM] = {20, 43, 91};
+static int media_mtu_size[MEDIA_NUM] = {20, 43, 115};
 extern unsigned char fragment_id;
 #define DEFAULT_FRAGMENT_ID 0            // 단편화 식별자 초기값
-#define MIN_MTU_SIZE 48 // 매체들 MTU 크기 중 가장 작은 값
+#define MIN_MTU_SIZE 43 // 매체들 MTU 크기 중 가장 작은 값
+#define MAX_MTU_SIZE 115 // 매체들 MTU 크기 중 가장 큰 값
 
 
 

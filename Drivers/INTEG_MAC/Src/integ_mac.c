@@ -16,11 +16,22 @@
 
 #define STM32_UUID ((uint32_t *)0x1FFF7A10)
 
-unsigned char testBuf_2[120] = {'1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1',
-'2','2','2','2','2','2','2','2','2','2','2','2','2','2','2','2','2','2','2','2','2','2','2','2',
-'1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1',
-'2','2','2','2','2','2','2','2','2','2','2','2','2','2','2','2','2','2','2','2','2','2','2','2',
-'1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1'};
+unsigned char testBuf_2[120] = {'1','1','1','1','1','1','1','1',
+'2','2','2','2','2','2','2','2',
+'3','3','3','3','3','3','3','3',
+'4','4','4','4','4','4','4','4',
+'5','5','5','5','5','5','5','5',
+'6','6','6','6','6','6','6','6',
+'7','7','7','7','7','7','7','7',
+'8','8','8','8','8','8','8','8',
+'9','9','9','9','9','9','9','9',
+'1','1','1','1','1','1','1','1',
+'2','2','2','2','2','2','2','2',
+'3','3','3','3','3','3','3','3',
+'4','4','4','4','4','4','4','4',
+'5','5','5','5','5','5','5','5',
+'6','6','6','6','6','6','6','6'
+};
 
 unsigned char testBuf_recv[120];
 
@@ -127,10 +138,50 @@ void integ_mac_handler(void * arg)
           }
           frame->media_type = OPT_MEDIA | cur_media;
           
-          
-          if(prev_media != cur_media) {
-            //sprintf(message_buffer, "* [INTEG][%s] 에서 [%s] 으로 매체 변경 \r\n",  media_name[prev_media],  media_name[cur_media]);
-            //insert_display_message(message_buffer);
+          // 단편화 패킷이면서 최적매체가 변경된 경우
+          if((frame->fragment_offset & 0x80) == 0x80 && (prev_media != cur_media)) {
+            
+            // Don't fragment 
+            if((frame->fragment_offset & 0x40) != 0x40) {
+
+              if (media_mtu_size[prev_media] < media_mtu_size[cur_media]) { //  단편화 조각을 합침
+                int max_octet_length = (media_mtu_size[cur_media]  - INTEG_FRAME_HEADER_LEN) / 8;
+                frame->frame_length = INTEG_FRAME_HEADER_LEN + max_octet_length * 8;
+                
+                // 합쳐진 프레임들 제거
+                int count = 0;
+                while (count != ((frame->frame_length - INTEG_FRAME_HEADER_LEN) / (MIN_MTU_SIZE - INTEG_FRAME_HEADER_LEN))) {                
+                  // 통합 프레임 큐에서 제거
+                  frame_queue_remove((frame->seqNumber + count) % MAX_SEQ_NUMBER);
+                  // 재전송 대기열의 프레임 제거
+                  re_frame_queue_remove((frame->seqNumber + count) % MAX_SEQ_NUMBER);
+                }
+                frame->message_type = DATA_MSG;
+              }
+              
+              else {      //단편화 조각을 분할
+                int count = (media_mtu_size[prev_media] - INTEG_FRAME_HEADER_LEN) / (media_mtu_size[cur_media] - INTEG_FRAME_HEADER_LEN);
+                int cur_octet_length = (media_mtu_size[cur_media]  - INTEG_FRAME_HEADER_LEN) / 8;
+                for (i = 0; i < count; i++) {
+                  // 통합 프레임 큐에서 제거
+                  frame_queue_remove((frame->seqNumber + i) % MAX_SEQ_NUMBER);
+                  // 재전송 대기열의 프레임 제거
+                  re_frame_queue_remove((frame->seqNumber + i) % MAX_SEQ_NUMBER);
+                  
+                  memcpy(&t_frame, frame, INTEG_FRAME_HEADER_LEN);
+                  t_frame.seqNumber = (frame->seqNumber + i) % MAX_SEQ_NUMBER;
+                  t_frame.frame_length = INTEG_FRAME_HEADER_LEN + (cur_octet_length * 8);
+                  t_frame.message_type = DATA_MSG;
+                  t_frame.fragment_offset = t_frame.fragment_offset + (i * cur_octet_length);
+                  t_frame.fragment_offset |= 0x40;        // DF 설정
+                  t_frame.data = get_mem();
+                  memcpy(t_frame.data, frame->data + (i * 8), cur_octet_length * 8);
+                  frame_queue_insert((unsigned char *)&t_frame);
+                  
+                  
+                }
+              }
+            }
           }
           
           sprintf(message_buffer, "[SEQ : %d] 데이터 재전송 (→ 목적지 : %02X)\r\n", frame->seqNumber, frame->dest_address[0]);
@@ -154,23 +205,29 @@ void integ_mac_handler(void * arg)
             t_frame.fragment_id = DEFAULT_FRAGMENT_ID;
             t_frame.fragment_offset = 0;       
             t_frame.media_type = opt_media;
+            //t_frame.media_type = 0xF0 | 0x01;
             
-            int max_octet_length = (MIN_MTU_SIZE - INTEG_FRAME_HEADER_LEN) / 8;
+            int min_octet_length = (MIN_MTU_SIZE - INTEG_FRAME_HEADER_LEN) / 8;
+            int max_octet_length = (MAX_MTU_SIZE - INTEG_FRAME_HEADER_LEN) / 8;
             for (i = 0; i < fragment_count; i++) {
-              t_frame.frame_length = INTEG_FRAME_HEADER_LEN + max_octet_length * 8;
+              t_frame.frame_length = INTEG_FRAME_HEADER_LEN + min_octet_length * 8;
               if (i >= 1) {
                 t_frame.seqNumber = get_seq_number();
               }
               
-              t_frame.fragment_offset = i * max_octet_length; 
-              if (i != (fragment_count - 1)) {    // MF 설정
+              t_frame.fragment_offset = i * min_octet_length; 
+              if (i != (fragment_count - 1)) {             // 마지막 패킷 아니면 MF 설정
                 t_frame.fragment_offset |= 0x80;
               }
+              else {
+                t_frame.fragment_offset |= 0x40;        // 마지막 패킷 DF 설정
+              } 
               
               t_frame.data = get_mem();
-              memcpy(t_frame.data, frame->data + ((t_frame.fragment_offset & 0x7F) * 8), max_octet_length * 8);
+              memcpy(t_frame.data, frame->data + ((t_frame.fragment_offset & 0x3F) * 8), min_octet_length * 8);
               frame_queue_insert((unsigned char *)&t_frame);
             }
+            continue;
           }
           // 전송하려는 프레임이 각 매체 최소 MTU 크기보다 작은 경우 단편화 없이 바로 전송
           else {
@@ -204,8 +261,9 @@ void integ_mac_handler(void * arg)
         // 단편화 프레임 수신 시
         // MF가 세팅되어 있거나, fragment_offset이 0이 아닌 경우
         unsigned char more_flag = frame->fragment_offset & 0x80;
-        unsigned char offset = frame->fragment_offset & 0x7F;
+        unsigned char offset = frame->fragment_offset & 0x3F;
         
+        // 조립
         if ((more_flag == 0x80 )|| (offset != 0)){
           memcpy(testBuf_recv + (offset * 8), frame->data, frame->frame_length - INTEG_FRAME_HEADER_LEN);
         }

@@ -37,6 +37,18 @@ INTEG_FRAME* frame_queue_delete(void)
    return(&frame_queue[front]);
 }
 
+void frame_queue_remove(unsigned char index)
+{
+  int i;
+  
+  // юс╫ц
+  for(i = 0; i < RE_FRAME_QUEUE_SIZE; i++) {
+    if(frame_queue[i].seqNumber == index) {
+      frame_queue[i].message_type = PASS_MSG;
+    }
+  }
+}
+
 void re_frame_queue_init(void)
 {
    re_front = re_rear = 0;
