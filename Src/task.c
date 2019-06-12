@@ -14,6 +14,7 @@ task.c
 #include "hash.h"
 #include "bluetooth.h"
 #include "display.h"
+#include "image.h"
 
 struct task Task_q[MAX_TASK];
 volatile int Task_f, Task_r;
@@ -61,24 +62,30 @@ void task_cmd(void *arg)
     return;
   }
   else if(!strcmp(cp0, "t")) {  // test
-    frame.frame_length = INTEG_FRAME_HEADER_LEN + 0x78;
+    frame.frame_length[LENGTH_LSB] = LSB(INTEG_FRAME_HEADER_LEN + 5);
+    frame.frame_length[LENGTH_MSB] = 0;
     memcpy(frame.src_address, my_integ_address, INTEG_ADDR_LEN); 
     memcpy(frame.dest_address, hood_integ_address, INTEG_ADDR_LEN); 
     integ_find_opt_link(NULL);
+    //frame.media_type = cur_media;
     frame.media_type = opt_media;
     frame.message_type = DATA_MSG;
 
     frame.ackNumber = 0;
+    frame.fragment_number = 0;
+    frame.fragment_offset = 0;
     frame.seqNumber = get_seq_number();
-    frame.data = testBuf_2;
+    frame.data = testBuf;
     frame_queue_insert((unsigned char *)&frame);
+    //macDataReq(broadcast_addr, &frame, frame.frame_length);
   }
   else if(!strcmp(cp0, "info")) {
     PrintAllHashData();
     HAL_Delay(3000);
   }
-  else if(!strcmp(cp0, "s")) {  // send
-    frame.frame_length = INTEG_FRAME_HEADER_LEN;
+  else if(!strcmp(cp0, "s")) {  // s
+    frame.frame_length[LENGTH_LSB] = LSB(INTEG_FRAME_HEADER_LEN + IMAGE_LENGTH);
+    frame.frame_length[LENGTH_MSB] = MSB(INTEG_FRAME_HEADER_LEN + IMAGE_LENGTH);
     memcpy(frame.src_address, my_integ_address, INTEG_ADDR_LEN); 
     memcpy(frame.dest_address, hood_integ_address, INTEG_ADDR_LEN); 
     integ_find_opt_link(NULL);
@@ -87,20 +94,22 @@ void task_cmd(void *arg)
     frame.message_type = DATA_MSG;
 
     frame.ackNumber = 0;
+    frame.fragment_number = 0;
+    frame.fragment_offset = 0;
     frame.seqNumber = get_seq_number();
-    frame.data = testBuf_2;
+    frame.data = sample_image;
     frame_queue_insert((unsigned char *)&frame);
     //macDataReq(broadcast_addr, &frame, frame.frame_length);
   }
   else if (!strcmp(cp0, "send")) {
     msg_len = strlen(cp1);
-    frame.frame_length = INTEG_FRAME_HEADER_LEN + msg_len;
+    //frame.frame_length = INTEG_FRAME_HEADER_LEN + msg_len;
     memcpy(frame.src_address, my_integ_address, INTEG_ADDR_LEN); 
     memcpy(frame.dest_address, hood_integ_address, INTEG_ADDR_LEN); 
     integ_find_opt_link(NULL);
     //frame.media_type = cur_media;
     frame.media_type = opt_media;
-    frame.message_type = 0X45;
+    frame.message_type = 0x45;
     memcpy(frame.data, cp1, msg_len);
     frame.ackNumber = 0;
     frame.seqNumber = get_seq_number();

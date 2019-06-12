@@ -9,7 +9,7 @@
 
 
 unsigned char *mem_pool[MAX_MEM_POOL_SIZE];
-unsigned char f_pool, r_pool;
+unsigned int f_pool, r_pool;
 
 
 // 메모리 풀 초기화

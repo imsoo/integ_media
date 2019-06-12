@@ -2,8 +2,8 @@
   mem_pool.h
 */
 
-#define MAX_MEM_POOL_SIZE 30
-#define MEM_SIZE 100
+#define MAX_MEM_POOL_SIZE 1000
+#define MEM_SIZE 96
 
 void mem_pool_init(void);
 unsigned char *get_mem(void);

@@ -4,7 +4,7 @@
 
 */
 
-#define MAX_TASK 16
+#define MAX_TASK 64
 
 struct task {
    void (*fun)(void*);

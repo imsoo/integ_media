@@ -201,7 +201,6 @@ void UART5_Init(void)
   {
     // Error_Handler();
   }
-  HAL_UART_Receive_IT(&huart5, rx3_data,1);
 }
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
@@ -227,7 +226,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
       else{ bt_state = 0; HAL_UART_Receive(&huart2, btBuf + bt_index + 1, t_char - 1, 1000); bt_index = 0; 
       memcpy((unsigned char *)&uart_frame, btBuf, INTEG_FRAME_HEADER_LEN);
       uart_frame.data = get_mem();
-      memcpy(uart_frame.data, btBuf + INTEG_FRAME_HEADER_LEN, uart_frame.frame_length - INTEG_FRAME_HEADER_LEN);
+      memcpy(uart_frame.data, btBuf + INTEG_FRAME_HEADER_LEN, uart_frame.frame_length[LENGTH_LSB] - INTEG_FRAME_HEADER_LEN);
       frame_queue_insert((unsigned char *)&uart_frame);
       }
       break;
@@ -340,9 +339,20 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
   
   // LI-FI
   else if (huart->Instance == huart5.Instance) {
-    l_flag = 1;
-    //HAL_UART_Transmit(&huart3, (uint8_t *)rx3_data,1,1);
-    HAL_UART_Receive_IT(&huart5,rx3_data,1);
+    printf("lifi_interrupt");
+    lifiBuf[lifi_recv_index] = lifi_rx_data;
+    lifi_recv_index++;
+    if(lifi_recv_index == LIFI_MAX_RECV) {
+      
+      lifi_recv_index = 0;
+      
+      // 프레임 큐에 삽입
+      memcpy((unsigned char *)&uart_frame, lifiBuf, INTEG_FRAME_HEADER_LEN);
+      uart_frame.data = get_mem();
+      memcpy(uart_frame.data, lifiBuf + INTEG_FRAME_HEADER_LEN, uart_frame.frame_length[LENGTH_LSB] - INTEG_FRAME_HEADER_LEN);
+      frame_queue_insert((unsigned char *)&uart_frame);
+    }
+    HAL_UART_Receive_IT(&huart5, &lifi_rx_data,1);
   }
   
   // CC2530
@@ -372,7 +382,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 #define DATA_FIELD 48
           memcpy((unsigned char *)&uart_frame, macBuf + 48, INTEG_FRAME_HEADER_LEN);
           uart_frame.data = get_mem();
-          memcpy(uart_frame.data, macBuf + 48 + INTEG_FRAME_HEADER_LEN, uart_frame.frame_length - INTEG_FRAME_HEADER_LEN);
+          memcpy(uart_frame.data, macBuf + 48 + INTEG_FRAME_HEADER_LEN, CONVERT_TO_INT(uart_frame.frame_length[LENGTH_LSB], uart_frame.frame_length[LENGTH_MSB]) - INTEG_FRAME_HEADER_LEN);
           frame_queue_insert((unsigned char *)&uart_frame);
         }
         else {

@@ -13,8 +13,12 @@
 #include "uart.h"
 #include "display.h"
 #include "mem_pool.h"
+#include "stub.h"                 // for test
 
 #define STM32_UUID ((uint32_t *)0x1FFF7A10)
+
+unsigned char testBuf[5] = {'H', 'e', 'l', 'l', 'o'
+};
 
 unsigned char testBuf_2[120] = {'1','1','1','1','1','1','1','1',
 '2','2','2','2','2','2','2','2',
@@ -33,15 +37,26 @@ unsigned char testBuf_2[120] = {'1','1','1','1','1','1','1','1',
 '6','6','6','6','6','6','6','6'
 };
 
-unsigned char testBuf_recv[120];
+unsigned char testBuf_recv[688];
 
 // dispaly 용 버퍼
 char message_buffer[COL_NUMS];
 
 // 각 매체 용 함수 포인터
+
+/*
+//default
 unsigned char (*fun_init[MEDIA_NUM])(unsigned char) = {lifi_init, bluetooth_init, startMac};   // 각 매체 초기화 함수 포인터
 unsigned char (*fun_send[MEDIA_NUM])(unsigned char* , unsigned char* , int ) = {lifi_send, bluetooth_send, macDataReq};    // 각 매체 데이터 전송 함수 포인터
 unsigned char* (*fun_get_addr[MEDIA_NUM])(unsigned char) = {lifi_get_mac_addr, bt_get_mac_addr, cc2530_get_mac_addr};    // 각 매체 주소 얻기 함수 포인터
+*/
+
+
+
+// test
+unsigned char (*fun_init[MEDIA_NUM])(unsigned char) = {lifi_init, stub_init, stub_init};   // 각 매체 초기화 함수 포인터
+unsigned char (*fun_send[MEDIA_NUM])(unsigned char* , unsigned char* , int ) = {lifi_send, stub_send, stub_send};    // 각 매체 데이터 전송 함수 포인터
+unsigned char* (*fun_get_addr[MEDIA_NUM])(unsigned char) = {lifi_get_mac_addr, stub_get_mac_addr, stub_get_mac_addr};    // 각 매체 주소 얻기 함수 포인터
 
 
 // 이웃 주소
@@ -143,44 +158,59 @@ void integ_mac_handler(void * arg)
             
             // Don't fragment 
             if((frame->fragment_offset & 0x40) != 0x40) {
-
+              
+              // 이전 매체의 MTU 보다 현재 매체의 MTU가 큰 경우 
               if (media_mtu_size[prev_media] < media_mtu_size[cur_media]) { //  단편화 조각을 합침
-                int max_octet_length = (media_mtu_size[cur_media]  - INTEG_FRAME_HEADER_LEN) / 8;
-                frame->frame_length = INTEG_FRAME_HEADER_LEN + max_octet_length * 8;
+                
+                // 두 매체 MTU 사이즈 차이 계산
+                unsigned char mtu_diff = (media_mtu_size[cur_media] - media_mtu_size[prev_media]) / (MIN_MTU_SIZE - INTEG_FRAME_HEADER_LEN);
+                
+                // 차이 만큼 조각 합침
+                frame->frame_length[LENGTH_LSB] += mtu_diff * 8;
                 
                 // 합쳐진 프레임들 제거
-                int count = 0;
-                while (count != ((frame->frame_length - INTEG_FRAME_HEADER_LEN) / (MIN_MTU_SIZE - INTEG_FRAME_HEADER_LEN))) {                
+                int frag_num = frame->fragment_number;
+                int remove_index;
+                
+                for (remove_index = frag_num; remove_index <= frag_num + mtu_diff; remove_index++) {
                   // 통합 프레임 큐에서 제거
-                  frame_queue_remove((frame->seqNumber + count) % MAX_SEQ_NUMBER);
+                  frame_queue_remove(frame->seqNumber, remove_index);
                   // 재전송 대기열의 프레임 제거
-                  re_frame_queue_remove((frame->seqNumber + count) % MAX_SEQ_NUMBER);
+                  re_frame_queue_remove(frame->seqNumber, remove_index);
                 }
                 frame->message_type = DATA_MSG;
               }
-              
               else {      //단편화 조각을 분할
-                int count = (media_mtu_size[prev_media] - INTEG_FRAME_HEADER_LEN) / (media_mtu_size[cur_media] - INTEG_FRAME_HEADER_LEN);
-                int cur_octet_length = (media_mtu_size[cur_media]  - INTEG_FRAME_HEADER_LEN) / 8;
-                for (i = 0; i < count; i++) {
+                
+                // 두 매체 MTU 사이즈 차이 계산
+                unsigned char mtu_diff = (media_mtu_size[prev_media] - media_mtu_size[cur_media]) / (MIN_MTU_SIZE - INTEG_FRAME_HEADER_LEN);
+
+                unsigned char cur_octet_length = (media_mtu_size[cur_media]  - INTEG_FRAME_HEADER_LEN) / 8;
+                unsigned char cur_frag_num = frame->fragment_number;
+                
+                for (i = 0; i < mtu_diff; i++) {
                   // 통합 프레임 큐에서 제거
-                  frame_queue_remove((frame->seqNumber + i) % MAX_SEQ_NUMBER);
+                  frame_queue_remove(frame->seqNumber, cur_frag_num + i);
                   // 재전송 대기열의 프레임 제거
-                  re_frame_queue_remove((frame->seqNumber + i) % MAX_SEQ_NUMBER);
+                  re_frame_queue_remove(frame->seqNumber, cur_frag_num + i);
                   
                   memcpy(&t_frame, frame, INTEG_FRAME_HEADER_LEN);
-                  t_frame.seqNumber = (frame->seqNumber + i) % MAX_SEQ_NUMBER;
-                  t_frame.frame_length = INTEG_FRAME_HEADER_LEN + (cur_octet_length * 8);
+
+                  t_frame.frame_length[LENGTH_LSB] = INTEG_FRAME_HEADER_LEN + (cur_octet_length * 8);;
+                  t_frame.frame_length[LENGTH_MSB] = 0;
                   t_frame.message_type = DATA_MSG;
-                  t_frame.fragment_offset = t_frame.fragment_offset + (i * cur_octet_length);
+                  t_frame.fragment_offset = frame->fragment_offset + i;
                   t_frame.fragment_offset |= 0x40;        // DF 설정
+                  t_frame.fragment_number = frame->fragment_number + i;
                   t_frame.data = get_mem();
-                  memcpy(t_frame.data, frame->data + (i * 8), cur_octet_length * 8);
+                  memcpy(t_frame.data, frame->data + (i * 8 * cur_octet_length), cur_octet_length * 8);
                   frame_queue_insert((unsigned char *)&t_frame);
-                  
-                  
                 }
               }
+            }
+            //  패킷 분할 불가한 경우
+            else {
+              // pass
             }
           }
           
@@ -191,43 +221,56 @@ void integ_mac_handler(void * arg)
         // 처음 전송인 경우
         else {
           // 전송하려는 프레임이 각 매체 최소 MTU 크기보다 큰 경우 
-          if(frame->frame_length > MIN_MTU_SIZE) {
+          if(CONVERT_TO_INT(frame->frame_length[LENGTH_LSB], frame->frame_length[LENGTH_MSB]) > MIN_MTU_SIZE) {
             
             // 단편화 준비
             int i;
-            int total_data_len = frame->frame_length - INTEG_FRAME_HEADER_LEN;
+            int total_data_len = CONVERT_TO_INT(frame->frame_length[LENGTH_LSB], frame->frame_length[LENGTH_MSB])  - INTEG_FRAME_HEADER_LEN;
             
             int fragment_count = ceil((total_data_len / (double) (MIN_MTU_SIZE - INTEG_FRAME_HEADER_LEN)));
             
-            //printf("%d %d %d", fragment_count, frame->frame_length, MIN_MTU_SIZE);
+            //printf("%d %d %d", fragment_count, total_data_len, MIN_MTU_SIZE);
             
             memcpy(&t_frame, frame, INTEG_FRAME_HEADER_LEN);
-            t_frame.fragment_id = DEFAULT_FRAGMENT_ID;
+            t_frame.fragment_number = 0;        // 0 번 시작
             t_frame.fragment_offset = 0;       
-            t_frame.media_type = opt_media;
+            t_frame.ackNumber = 0x00;
+            t_frame.media_type = opt_media | 0xF0;
             //t_frame.media_type = 0xF0 | 0x01;
             
             int min_octet_length = (MIN_MTU_SIZE - INTEG_FRAME_HEADER_LEN) / 8;
             int max_octet_length = (MAX_MTU_SIZE - INTEG_FRAME_HEADER_LEN) / 8;
             for (i = 0; i < fragment_count; i++) {
-              t_frame.frame_length = INTEG_FRAME_HEADER_LEN + min_octet_length * 8;
-              if (i >= 1) {
-                t_frame.seqNumber = get_seq_number();
-              }
+              //printf("[FOR]i : %d\r\n, i");
+              t_frame.frame_length[LENGTH_LSB] = LSB(INTEG_FRAME_HEADER_LEN + min_octet_length * 8);
+              t_frame.frame_length[LENGTH_MSB] = MSB(INTEG_FRAME_HEADER_LEN + min_octet_length * 8);
+              t_frame.fragment_number = i;
+              
               
               t_frame.fragment_offset = i * min_octet_length; 
-              if (i != (fragment_count - 1)) {             // 마지막 패킷 아니면 MF 설정
+              if (i != (fragment_count - 1)) {             // 마지막 프레임 아니면 MF 설정
                 t_frame.fragment_offset |= 0x80;
               }
               else {
-                t_frame.fragment_offset |= 0x40;        // 마지막 패킷 DF 설정
+                t_frame.frame_length[LENGTH_LSB] = LSB(INTEG_FRAME_HEADER_LEN + (total_data_len - (i * min_octet_length) * 8));  // 마지막 프레임 길이 계산
+                t_frame.frame_length[LENGTH_MSB] = MSB(INTEG_FRAME_HEADER_LEN + (total_data_len - (i * min_octet_length) * 8));
+                t_frame.fragment_offset |= 0x40;        // 마지막 프레임 DF 설정
               } 
               
               t_frame.data = get_mem();
-              memcpy(t_frame.data, frame->data + ((t_frame.fragment_offset & 0x3F) * 8), min_octet_length * 8);
-              frame_queue_insert((unsigned char *)&t_frame);
+              
+              if (total_data_len - (min_octet_length * i * 8) < max_octet_length * 8) {
+                //printf("[max]i : %d\r\n", i);
+                t_frame.fragment_offset |= 0x40;        // 끝 프레임 DF 설정
+                memcpy(t_frame.data, frame->data + ((t_frame.fragment_offset & 0x3F) * 8), min_octet_length * 8);
+              }
+              else {
+                //printf("[min]i : %d\r\n", i);
+                memcpy(t_frame.data, frame->data + ((t_frame.fragment_offset & 0x3F) * 8), max_octet_length * 8);
+              }
+              frame_queue_insert((unsigned char *)&t_frame);    // 프레임 삽입
             }
-            continue;
+            continue; // temp
           }
           // 전송하려는 프레임이 각 매체 최소 MTU 크기보다 작은 경우 단편화 없이 바로 전송
           else {
@@ -235,7 +278,7 @@ void integ_mac_handler(void * arg)
             re_frame_queue_insert((unsigned char *)frame);
             frame->media_type = cur_media;
             
-            sprintf(message_buffer, "[SEQ : %d] 데이터 전송 ( → 목적지 : %02X) \r\n", frame->seqNumber, frame->dest_address[0]);
+            sprintf(message_buffer, "[SEQ : %d] 데이터 전송 ( → 목적지 : %02X) %d %d\r\n", frame->seqNumber, frame->dest_address[0], frame->fragment_number, frame->fragment_offset);
             // sprintf(message_buffer, "[SEQ : %d] 데이터 전송 ( → 목적지 : %02X) : %s\r\n", frame->seqNumber, frame->dest_address[0], frame->data);
             insert_display_message(cur_media, message_buffer);
           }
@@ -251,35 +294,44 @@ void integ_mac_handler(void * arg)
         if(table != NULL) {
           // 송신
           //printf("cur_media = %d\r\n", cur_media);
-          fun_send[cur_media](table->data.media_addr[cur_media], (unsigned char *)frame, frame->frame_length);
+          fun_send[cur_media](table->data.media_addr[cur_media], (unsigned char *)frame, CONVERT_TO_INT(frame->frame_length[LENGTH_LSB], frame->frame_length[LENGTH_MSB]));
+          HAL_Delay(300);
         }
       }
-      // 데이터 수신 시 ACK 생성
+      // 데이터 수신 시 -> ACK 생성
       else if(frame_state == RECEIVE_FRAME) {
         //printf("** Data 수신\r\n");
         
         // 단편화 프레임 수신 시
         // MF가 세팅되어 있거나, fragment_offset이 0이 아닌 경우
         unsigned char more_flag = frame->fragment_offset & 0x80;
+        
+        //unsigned char offset = frame->fragment_number;
         unsigned char offset = frame->fragment_offset & 0x3F;
         
         // 조립
         if ((more_flag == 0x80 )|| (offset != 0)){
-          memcpy(testBuf_recv + (offset * 8), frame->data, frame->frame_length - INTEG_FRAME_HEADER_LEN);
+          unsigned char send_len = CONVERT_TO_INT(frame->frame_length[LENGTH_LSB], frame->frame_length[LENGTH_MSB]) - INTEG_FRAME_HEADER_LEN;
+          memcpy(testBuf_recv + (offset * (MIN_MTU_SIZE - INTEG_FRAME_HEADER_LEN)), frame->data, CONVERT_TO_INT(frame->frame_length[LENGTH_LSB], frame->frame_length[LENGTH_MSB]) - INTEG_FRAME_HEADER_LEN);
+          HAL_UART_Transmit(&huart3, "iiiii", 5, 1000);
+          HAL_UART_Transmit(&huart3, &offset, 1, 1000); //offset
+          HAL_UART_Transmit(&huart3, &send_len, 1, 1000); // len
+          HAL_UART_Transmit(&huart3, frame->data,  CONVERT_TO_INT(frame->frame_length[LENGTH_LSB], frame->frame_length[LENGTH_MSB]) - INTEG_FRAME_HEADER_LEN, 1000);
         }
-
         
         // ACK 패킷 생성
-        t_frame.frame_length = frame->frame_length;
+        t_frame.frame_length[LENGTH_LSB] = INTEG_FRAME_HEADER_LEN;
+        t_frame.frame_length[LENGTH_MSB] = 0;
         t_frame.message_type = ACK_MSG;
         t_frame.media_type = frame->media_type & 0x0F;
         t_frame.ackNumber = frame->seqNumber + 1;
+        t_frame.fragment_number = frame->fragment_number;
         t_frame.data = NULL;
         memcpy(t_frame.dest_address, frame->src_address, INTEG_ADDR_LEN);
         memcpy(t_frame.src_address, my_integ_address, INTEG_ADDR_LEN);
         
-        sprintf(message_buffer, "[SEQ : %d] 데이터 수신 ( ← 근원지 : %02X) \r\n",  frame->seqNumber, frame->src_address[0]);
-        // sprintf(message_buffer, "[SEQ : %d] 데이터 수신 ( ← 근원지 : %02X) : %s\r\n",  frame->seqNumber, frame->src_address[0], frame->data);
+        //sprintf(message_buffer, "[SEQ : %d] 데이터 수신 ( ← 근원지 : %02X) \r\n",  frame->seqNumber, frame->src_address[0]);
+        sprintf(message_buffer, "[SEQ : %d] 데이터 수신 ( ← 근원지 : %02X) : %s\r\n",  frame->seqNumber, frame->src_address[0], frame->data);
         insert_display_message(t_frame.media_type, message_buffer);
         
         // 메모리 -> 풀 반환
@@ -305,7 +357,7 @@ void integ_mac_handler(void * arg)
         if(table != NULL) {
           // 송신
           //printf("cur_media = %d\r\n", cur_media);
-          fun_send[cur_media](table->data.media_addr[cur_media], (unsigned char *)frame, frame->frame_length);
+          fun_send[cur_media](table->data.media_addr[cur_media], (unsigned char *)frame, CONVERT_TO_INT(frame->frame_length[LENGTH_LSB], frame->frame_length[LENGTH_MSB]));
         }
         
         sprintf(message_buffer, "[ACK : %d] ACK 송신 ( → 목적지 : %02X) \r\n",  frame->ackNumber, frame->dest_address[0]);
@@ -321,7 +373,9 @@ void integ_mac_handler(void * arg)
         
         ackNumber = frame->ackNumber - 1;
         // 재전송 대기열의 프레임 제거
-        re_frame_queue_remove(ackNumber % MAX_SEQ_NUMBER);
+        re_frame_queue_remove(ackNumber % MAX_SEQ_NUMBER, frame->fragment_number);
+        // 전송 대기열의 프레임 제거
+        frame_queue_remove(ackNumber % MAX_SEQ_NUMBER, frame->fragment_number);
         
         sprintf(message_buffer, "[ACK : %d] ACK 수신 ( ←근원지 : %02X) \r\n",  frame->ackNumber, frame->src_address[0]);
         insert_display_message(frame->media_type, message_buffer);
@@ -338,10 +392,10 @@ void integ_mac_handler(void * arg)
         if(table != NULL) {
           // 송신
           
-          for(i = 0; i < MEDIA_NUM; i++) {
+          for(i = 1; i < MEDIA_NUM; i++) {
             frame->media_type = i;
             //printf("%s ADV_MSG 송신\r\n", media_name[frame->media_type]);
-            fun_send[i](table->data.media_addr[i], (unsigned char *)frame, frame->frame_length);
+            fun_send[i](table->data.media_addr[i], (unsigned char *)frame, CONVERT_TO_INT(frame->frame_length[LENGTH_LSB], frame->frame_length[LENGTH_MSB]));
             HAL_Delay(30);
           }
         }
@@ -373,7 +427,7 @@ void integ_mac_handler(void * arg)
         
         // ADV_MSG 송신자에게 MAC 테이블을 포함해서 ADV_IND 전송
         t_frame.data = get_mem();
-        t_frame.frame_length = frame->frame_length;
+        memcpy(t_frame.frame_length, frame->frame_length, INTEG_FRAME_LEN_FILED_SIZE);
         t_frame.message_type = ADV_IND;
         t_frame.media_type = frame->media_type;
         memcpy(t_frame.src_address, my_integ_address, INTEG_ADDR_LEN);
@@ -396,7 +450,7 @@ void integ_mac_handler(void * arg)
         if(table != NULL) {
           // 송신
           HAL_Delay(30);
-          fun_send[frame->media_type](table->data.media_addr[frame->media_type], (unsigned char *)frame, frame->frame_length);
+          fun_send[frame->media_type](table->data.media_addr[frame->media_type], (unsigned char *)frame, CONVERT_TO_INT(frame->frame_length[LENGTH_LSB], frame->frame_length[LENGTH_MSB]));
         }
         // 메모리 -> 풀 반환
         return_mem(frame->data);
@@ -470,7 +524,6 @@ void integ_mac_init(void)
   
   insert_display_message(INTEG_MSG, "통합 MAC 초기화 시작\r\n");
   
-  fragment_id = DEFAULT_FRAGMENT_ID;
   seqNumber = DEFAULT_SEQ_NUMBER;        // 순서번호 초기화
   frame_queue_init();                                   // 통합 프레임 큐 초기화
   re_frame_queue_init();                                // 재전송 프레임 큐 초기화
@@ -478,25 +531,31 @@ void integ_mac_init(void)
   
   advertising_frame.data = get_mem();
   
-  // 임시 
-  if (LSB(STM32_UUID[0]) == 0x2c) {
-    hood_integ_address[0] = 0x2E;
-    /*
-    hood_cc2530_address[0] = 0x2E;
-    hood_lifi_address[0] = 0x2E;
-    hood_bluetooth_address[0] = 0x2E;
-    */
+  
+  // lifi _test 
+  if (LSB(STM32_UUID[0]) == 0x2C) {
+    hood_integ_address[0] = 0x29;
     deviceType = MASTER;
   }
   else {
-    hood_integ_address[0] = 0x2c;
-    /*
-    hood_cc2530_address[0] = 0x2c;
-    hood_lifi_address[0] = 0x2c;
-    hood_bluetooth_address[0] = 0x2c;
-    */
+    hood_integ_address[0] = 0x2C;
+    HAL_UART_Receive_IT(&huart5, &lifi_rx_data,1);
     deviceType = SLAVE;
   }
+
+  
+  /*
+  // 임시 
+  if (LSB(STM32_UUID[0]) == 0x28) {
+    hood_integ_address[0] = 0x2E;
+    deviceType = MASTER;
+  }
+  else {
+    hood_integ_address[0] = 0x28;
+    HAL_UART_Receive_IT(&huart5, &lifi_rx_data,1);
+    deviceType = SLAVE;
+  }
+  */
   
   // MCU <---> 매체 통신 초기화
   
@@ -516,7 +575,8 @@ void integ_mac_init(void)
   memcpy(my_lifi_address, lifi_get_mac_addr(MAC_ADDR), LIFI_ADDR_LEN);                           // LI-FI
   
   // advertising frame 생성
-  advertising_frame.frame_length = INTEG_FRAME_HEADER_LEN + MEDIA_NUM * MEDIA_ADDR_LEN_MAX;
+  advertising_frame.frame_length[LENGTH_LSB] = INTEG_FRAME_HEADER_LEN + MEDIA_NUM * MEDIA_ADDR_LEN_MAX;
+  advertising_frame.frame_length[LENGTH_MSB] = 0;
   advertising_frame.message_type = ADV_MSG;
   memcpy(advertising_frame.src_address, my_integ_address, INTEG_ADDR_LEN);
   memcpy(advertising_frame.dest_address, integ_broadcast_addr, INTEG_ADDR_LEN);
@@ -561,6 +621,8 @@ void integ_mac_init(void)
   AddHashData(table->id, table);
   */
   
+  // 첫 최적매체는 라이파이
+  // opt_media = LIFI;
   // 최적 매체 선택
   integ_find_opt_link(NULL);
   

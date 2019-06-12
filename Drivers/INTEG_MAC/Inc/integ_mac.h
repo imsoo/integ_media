@@ -4,7 +4,8 @@
 
 
 */
-
+// 일반 테스트 용  :  Hello
+extern unsigned char testBuf[5];
 // 단편화 테스트 용 데이터
 extern unsigned char testBuf_2[120];
 
@@ -30,7 +31,7 @@ extern unsigned char STATUS_TABLE[STATUS_NUM][MEDIA_NUM];
 
 
 #define FIND_OPT_PERIOD 5 // 최적 노드 검색 주기 500ms
-#define RETRANSMIT_TIME 3      // 재전송 주기 500ms
+#define RETRANSMIT_TIME 5      // 재전송 주기 500ms
 #define RETRANSMIT_NUM 3      // 3번 ACK 안오는 경우 매체변경
 #define R_SUCCESS 1     // 실행 결과 : 성공
 #define R_FAIL 0                // 실행 결과 : 실패
@@ -43,11 +44,6 @@ static char *result_string[2] = {"FAIL", "SUCCESS"};
 #define MEDIA_ADDR_LEN_MAX 8    // 각 매체 주소중 길이가장 긴 값
 static unsigned char media_addr_len[MEDIA_NUM] = {LIFI_ADDR_LEN, BLUETOOTH_ADDR_LEN, CC2530_ADDR_LEN};  /// 각 매체 주소 길이 인덱스로 접근 시
 
-#define INTEG_FRAME_HEADER_LEN 19 // 통합 맥 프레임 헤더 길이
-#define INTEG_FRAME_DATA_LEN 39     // 통합 맥 프레임 데이터 길이
-#define INTEG_FRAME_TOTAL_LEN 58 + 1   // 통합 맥 프레임 헤더 + 데이터 길이
-
-#define INTEG_FRAME_LEN_FIELD 0     // 프레임 길이 필드는 통합 프레임의 0번
 
 // messageType
 #define DATA_MSG 0x01   // 일반 데이터를 담은 메시지
@@ -61,16 +57,12 @@ static unsigned char media_addr_len[MEDIA_NUM] = {LIFI_ADDR_LEN, BLUETOOTH_ADDR_
 #define SLAVE 0x01
 
 // fragmentaion 관련
-static int media_mtu_size[MEDIA_NUM] = {20, 43, 115};
-extern unsigned char fragment_id;
-#define DEFAULT_FRAGMENT_ID 0            // 단편화 식별자 초기값
-#define MIN_MTU_SIZE 43 // 매체들 MTU 크기 중 가장 작은 값
-#define MAX_MTU_SIZE 115 // 매체들 MTU 크기 중 가장 큰 값
-
-
+static int media_mtu_size[MEDIA_NUM] = {28, 44, 116};
+#define MIN_MTU_SIZE 44 // 매체들 MTU 크기 중 가장 작은 값
+#define MAX_MTU_SIZE 116 // 매체들 MTU 크기 중 가장 큰 값
 
 // SEQ
-#define MAX_SEQ_NUMBER 10                   // 순서 번호 최대
+#define MAX_SEQ_NUMBER 1024                   // 순서 번호 최대
 #define DEFAULT_SEQ_NUMBER 0            // 순서 번호 초기값
 extern unsigned char seqNumber;         // 순서 번호
 
@@ -88,17 +80,24 @@ typedef struct integ_table {
   unsigned char media_addr[MEDIA_NUM][MEDIA_ADDR_LEN_MAX];      // 각 매체 주소 
 } INTEG_TABLE;
 
+#define INTEG_FRAME_HEADER_LEN 20 // 통합 맥 프레임 헤더 길이
+#define INTEG_FRAME_DATA_LEN 39     // 통합 맥 프레임 데이터 길이
+#define INTEG_FRAME_TOTAL_LEN 59 + 1   // 통합 맥 프레임 헤더 + 데이터 길이
+#define INTEG_FRAME_LEN_FILED_SIZE 2    // 프레임 길이 필드 크기 2바이트
+
+#define INTEG_FRAME_LEN_FIELD 0     // 프레임 길이 필드는 통합 프레임의 0번
+
 
 // 통합 MAC 프레임 구조체
 typedef struct integ_frame {
-  unsigned char frame_length;   // 프레임 길이
+  unsigned char frame_length[2];   // 프레임 길이
   unsigned char message_type;   // 메시지 유형
   unsigned char src_address[INTEG_ADDR_LEN];    // 근원지 주소
   unsigned char dest_address[INTEG_ADDR_LEN];   // 목적지 주소
   unsigned char media_type;     // 매체 유형
   unsigned char seqNumber;      // 순서 번호
   unsigned char ackNumber;      // 응답 번호
-  unsigned char fragment_id;            // 단편화 식별자
+  unsigned char fragment_number;            // 단편화 번호
   unsigned char fragment_offset;        // 프레그 먼트 오프셋
   unsigned char *data;// 페이로드
 } INTEG_FRAME;
@@ -117,8 +116,14 @@ void integ_print_frame(INTEG_FRAME *frame);
 #define BROADCAST_ADDR 0xFF
 unsigned char* integ_get_mac_addr(unsigned char addr_type);
 
+#define LENGTH_LSB 0
+#define LENGTH_MSB 1
+
 /** Get the Least Significant Byte (LSB) of an unsigned int*/
 #define LSB(num) ((num) & 0xFF)
 
 /** Get the Most Significant Byte (MSB) of an unsigned int*/
 #define MSB(num) ((num) >> 8)
+
+/** Convert two unsigned chars to an unsigned int, LSB first*/
+#define CONVERT_TO_INT(lsb,msb) ((lsb) + 0x0100*(msb))

@@ -39,6 +39,7 @@
 /* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
+#include <math.h>
 #include "main.h"
 #include "uart.h"
 #include "gpio.h"
@@ -65,48 +66,16 @@ int main(void)
   SystemClock_Config();
   GPIO_Init();
   MX_TIM6_Init();
-  //UART2_Init(); // BT
+  UART2_Init(); // BT
   UART3_Init(); // PC
-  HAL_Delay(500);
-  
-  int i;
-  HAL_UART_Transmit(&huart3, "iiiii", 5, 1000);
-  for (i = 0; i < IMAGE_LENGTH; i++) {
-    HAL_UART_Transmit(&huart3, &sample_image[i], 1, 1000);
-    HAL_Delay(30);
-  }
-  while(1);
-  //UART4_Init(); // CC2530
-  //UART5_Init(); // LIFI
+  UART4_Init(); // CC2530
+  UART5_Init(); // LIFI
   HAL_Delay(500);
   
   init_display_buffer();
   
   integ_mac_init();
-  
-  /*
-  while(1) {
-    //HAL_UART_Transmit(&huart5,&testBuf[index],1,100);
-    //HAL_UART_Transmit(&huart5,&tx5_data[index++],1,1);
-    HAL_Delay(1);
-    
-    index = (index +1 ) % 100;
-    //index=index%sizeof(tx5_data);
-    //HAL_UART_Receive_IT(&huart5,rx3_data,1);    
-    if(l_flag)
-    {   
-      
-      //printf("%c", rx3_data[1]);
-      //HAL_Delay(100);
-      //HAL_UART_Transmit(&huart3,rx3_data,1,1);
-      
-      l_flag=0;
-      //continue;
-    }
-  }
-  */
-  
-  
+
   while(1) {
     __disable_interrupt();
     tag = task_delete(&task);
