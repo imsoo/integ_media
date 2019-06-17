@@ -10,7 +10,7 @@ display.c
 unsigned char display_buffer_index = 0;
 unsigned char new_line[2] = {'\r', '\n'};
 char display_buffer[ROW_LINES][COL_NUMS];
-unsigned char *media_name_for_display[MEDIA_NUM] = {"  LI-FI   ", "BLUETOOTH ", " CC2530    "};
+unsigned char *media_name_for_display[MEDIA_NUM] = {"  LI-FI   ", "BLUETOOTH ", " ZIGBEE    "};
 unsigned char rectange1[COL_NUMS] = {"旨收收收收收旬      旨收收收收收旬      旨收收收收收旬\r\n"};
 unsigned char rectange1_1[COL_NUMS] = {"早          早      旨收收收收收旬      旨收收收收收旬\r\n"};
 unsigned char rectange2[COL_NUMS] = {"早   MCU    早收X 收早 ABCDEFG  早收X 收早 NEIGHBOR 早\r\n"};

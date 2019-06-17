@@ -1,0 +1,960 @@
+###############################################################################
+#
+# IAR ELF Linker V7.80.3.12102/W32 for ARM                17/Jun/2019  15:04:36
+# Copyright 2007-2016 IAR Systems AB.
+#
+#    Output file  =  
+#        C:\Users\PanJun-Kim\Documents\CubeMX\MAC_TEST\EWARM\MAC_TEST\Exe\MAC_TEST.out
+#    Map file     =  
+#        C:\Users\PanJun-Kim\Documents\CubeMX\MAC_TEST\EWARM\MAC_TEST\List\MAC_TEST.map
+#    Command line =  
+#        C:\Users\PanJun-Kim\Documents\CubeMX\MAC_TEST\EWARM\MAC_TEST\Obj\bluetooth.o
+#        C:\Users\PanJun-Kim\Documents\CubeMX\MAC_TEST\EWARM\MAC_TEST\Obj\display.o
+#        C:\Users\PanJun-Kim\Documents\CubeMX\MAC_TEST\EWARM\MAC_TEST\Obj\frame_queue.o
+#        C:\Users\PanJun-Kim\Documents\CubeMX\MAC_TEST\EWARM\MAC_TEST\Obj\gpio.o
+#        C:\Users\PanJun-Kim\Documents\CubeMX\MAC_TEST\EWARM\MAC_TEST\Obj\hash.o
+#        C:\Users\PanJun-Kim\Documents\CubeMX\MAC_TEST\EWARM\MAC_TEST\Obj\integ_mac.o
+#        C:\Users\PanJun-Kim\Documents\CubeMX\MAC_TEST\EWARM\MAC_TEST\Obj\lifi.o
+#        C:\Users\PanJun-Kim\Documents\CubeMX\MAC_TEST\EWARM\MAC_TEST\Obj\list.o
+#        C:\Users\PanJun-Kim\Documents\CubeMX\MAC_TEST\EWARM\MAC_TEST\Obj\mac_interface.o
+#        C:\Users\PanJun-Kim\Documents\CubeMX\MAC_TEST\EWARM\MAC_TEST\Obj\mac_interface_uart.o
+#        C:\Users\PanJun-Kim\Documents\CubeMX\MAC_TEST\EWARM\MAC_TEST\Obj\main.o
+#        C:\Users\PanJun-Kim\Documents\CubeMX\MAC_TEST\EWARM\MAC_TEST\Obj\mem_pool.o
+#        C:\Users\PanJun-Kim\Documents\CubeMX\MAC_TEST\EWARM\MAC_TEST\Obj\queue.o
+#        C:\Users\PanJun-Kim\Documents\CubeMX\MAC_TEST\EWARM\MAC_TEST\Obj\startup_stm32f429xx.o
+#        C:\Users\PanJun-Kim\Documents\CubeMX\MAC_TEST\EWARM\MAC_TEST\Obj\stm32f4xx_hal.o
+#        C:\Users\PanJun-Kim\Documents\CubeMX\MAC_TEST\EWARM\MAC_TEST\Obj\stm32f4xx_hal_cortex.o
+#        C:\Users\PanJun-Kim\Documents\CubeMX\MAC_TEST\EWARM\MAC_TEST\Obj\stm32f4xx_hal_dma.o
+#        C:\Users\PanJun-Kim\Documents\CubeMX\MAC_TEST\EWARM\MAC_TEST\Obj\stm32f4xx_hal_dma_ex.o
+#        C:\Users\PanJun-Kim\Documents\CubeMX\MAC_TEST\EWARM\MAC_TEST\Obj\stm32f4xx_hal_flash.o
+#        C:\Users\PanJun-Kim\Documents\CubeMX\MAC_TEST\EWARM\MAC_TEST\Obj\stm32f4xx_hal_flash_ex.o
+#        C:\Users\PanJun-Kim\Documents\CubeMX\MAC_TEST\EWARM\MAC_TEST\Obj\stm32f4xx_hal_flash_ramfunc.o
+#        C:\Users\PanJun-Kim\Documents\CubeMX\MAC_TEST\EWARM\MAC_TEST\Obj\stm32f4xx_hal_gpio.o
+#        C:\Users\PanJun-Kim\Documents\CubeMX\MAC_TEST\EWARM\MAC_TEST\Obj\stm32f4xx_hal_msp.o
+#        C:\Users\PanJun-Kim\Documents\CubeMX\MAC_TEST\EWARM\MAC_TEST\Obj\stm32f4xx_hal_pwr.o
+#        C:\Users\PanJun-Kim\Documents\CubeMX\MAC_TEST\EWARM\MAC_TEST\Obj\stm32f4xx_hal_pwr_ex.o
+#        C:\Users\PanJun-Kim\Documents\CubeMX\MAC_TEST\EWARM\MAC_TEST\Obj\stm32f4xx_hal_rcc.o
+#        C:\Users\PanJun-Kim\Documents\CubeMX\MAC_TEST\EWARM\MAC_TEST\Obj\stm32f4xx_hal_rcc_ex.o
+#        C:\Users\PanJun-Kim\Documents\CubeMX\MAC_TEST\EWARM\MAC_TEST\Obj\stm32f4xx_hal_tim.o
+#        C:\Users\PanJun-Kim\Documents\CubeMX\MAC_TEST\EWARM\MAC_TEST\Obj\stm32f4xx_hal_tim_ex.o
+#        C:\Users\PanJun-Kim\Documents\CubeMX\MAC_TEST\EWARM\MAC_TEST\Obj\stm32f4xx_hal_uart.o
+#        C:\Users\PanJun-Kim\Documents\CubeMX\MAC_TEST\EWARM\MAC_TEST\Obj\stm32f4xx_it.o
+#        C:\Users\PanJun-Kim\Documents\CubeMX\MAC_TEST\EWARM\MAC_TEST\Obj\stub.o
+#        C:\Users\PanJun-Kim\Documents\CubeMX\MAC_TEST\EWARM\MAC_TEST\Obj\system_stm32f4xx.o
+#        C:\Users\PanJun-Kim\Documents\CubeMX\MAC_TEST\EWARM\MAC_TEST\Obj\task.o
+#        C:\Users\PanJun-Kim\Documents\CubeMX\MAC_TEST\EWARM\MAC_TEST\Obj\timer.o
+#        C:\Users\PanJun-Kim\Documents\CubeMX\MAC_TEST\EWARM\MAC_TEST\Obj\uart.o
+#        C:\Users\PanJun-Kim\Documents\CubeMX\MAC_TEST\EWARM\MAC_TEST\Obj\utilities.o
+#        --redirect _Printf=_PrintfFull --redirect _Scanf=_ScanfFull -o
+#        C:\Users\PanJun-Kim\Documents\CubeMX\MAC_TEST\EWARM\MAC_TEST\Exe\MAC_TEST.out
+#        --map
+#        C:\Users\PanJun-Kim\Documents\CubeMX\MAC_TEST\EWARM\MAC_TEST\List\MAC_TEST.map
+#        --config
+#        C:\Users\PanJun-Kim\Documents\CubeMX\MAC_TEST\EWARM/stm32f429xx_flash.icf
+#        --semihosting --entry __iar_program_start --vfe
+#
+###############################################################################
+
+*******************************************************************************
+*** RUNTIME MODEL ATTRIBUTES
+***
+
+CppFlavor                     = *
+__Heap_Handler                = Basic
+__SystemLibrary               = DLib
+__dlib_dynamic_initialization = normal
+
+
+*******************************************************************************
+*** PLACEMENT SUMMARY
+***
+
+"A0":  place at 0x08000000 { ro section .intvec };
+"P1":  place in [from 0x08000000 to 0x081fffff] { ro };
+"P2":  place in [from 0x20000000 to 0x2002ffff] { rw, block CSTACK, block HEAP };
+initialize by copy { rw };
+
+  Section             Kind        Address     Size  Object
+  -------             ----        -------     ----  ------
+"A0":                                        0x1ac
+  .intvec             ro code  0x08000000    0x1ac  startup_stm32f429xx.o [1]
+                             - 0x080001ac    0x1ac
+
+"P1":                                       0x6a46
+  .text               ro code  0x080001ac   0x119a  xprintffull.o [3]
+  .text               ro code  0x08001346     0x20  xmbtowc.o [3]
+  .text               ro code  0x08001366      0xa  xsprout.o [3]
+  .text               ro code  0x08001370     0x16  strchr.o [5]
+  .text               ro code  0x08001388     0x36  strlen.o [5]
+  .text               ro code  0x080013c0     0x58  memchr.o [5]
+  .text               ro code  0x08001418      0xa  xmbcurmax.o [3]
+  .text               ro code  0x08001424     0xb0  xxmemxmalloc.o [3]
+  .text               ro code  0x080014d4     0x1a  xwctomb.o [3]
+  .text               ro code  0x080014f0     0x76  ABImemcpy_unaligned.o [5]
+  .text               ro code  0x08001568     0x80  xxmemxfree.o [3]
+  .text               ro code  0x080015e8     0xee  I64DivMod.o [5]
+  .text               ro code  0x080016d6     0x44  xdnorm.o [4]
+  .text               ro code  0x0800171c     0x2e  DblCmpLe.o [4]
+  .text               ro code  0x0800174c     0x2e  DblCmpGe.o [4]
+  .text               ro code  0x0800177c    0x114  xdscale.o [4]
+  .text               ro code  0x08001890     0x58  DblToI32.o [4]
+  .text               ro code  0x080018e8     0x30  I32ToDbl.o [4]
+  .text               ro code  0x08001918    0x180  DblSub.o [4]
+  .text               ro code  0x08001a98    0x1a2  DblMul.o [4]
+  .text               ro code  0x08001c3c    0x256  DblDiv.o [4]
+  .text               ro code  0x08001e94     0x6c  localeconv.o [3]
+  .text               ro code  0x08001f00      0xe  div.o [3]
+  .text               ro code  0x08001f10     0x24  setlocale.o [3]
+  .text               ro code  0x08001f34     0x60  xencoding_sb.o [3]
+  .text               ro code  0x08001f94     0x2c  xgetmemchunk.o [3]
+  .text               ro code  0x08001fc0      0x2  I64DivZer.o [5]
+  .text               ro code  0x08001fc4     0xd4  DblAdd.o [4]
+  .text               ro code  0x08002098      0x2  xtls.o [3]
+  .text               ro code  0x0800209c    0xcfc  integ_mac.o [1]
+  .text               ro code  0x08002d98    0x1d8  hash.o [1]
+  .text               ro code  0x08002f70    0x218  display.o [1]
+  .text               ro code  0x08003188     0x8c  mem_pool.o [1]
+  .text               ro code  0x08003214    0x182  frame_queue.o [1]
+  .text               ro code  0x08003398     0x62  memcmp_unaligned.o [5]
+  .text               ro code  0x080033fc     0x34  sprintf.o [3]
+  .text               ro code  0x08003430     0x6e  ceil.o [4]
+  .text               ro code  0x080034a0     0xf4  timer.o [1]
+  .text               ro code  0x08003594     0x28  stm32f4xx_hal.o [1]
+  .text               ro code  0x080035bc    0x64a  stm32f4xx_hal_uart.o [1]
+  .text               ro code  0x08003c08    0x35c  task.o [1]
+  .text               ro code  0x08003f64    0x378  mac_interface.o [1]
+  .text               ro code  0x080042dc    0x308  bluetooth.o [1]
+  .text               ro code  0x080045e4     0xa8  lifi.o [1]
+  .text               ro code  0x0800468c     0xe0  rand.o [3]
+  .text               ro code  0x0800476c     0x24  printf.o [3]
+  .text               ro code  0x08004790     0x6c  strncpy_unaligned.o [5]
+  .text               ro code  0x080047fc     0x44  strcpy_unaligned.o [5]
+  .text               ro code  0x08004840      0x6  ABImemclr.o [5]
+  .text               ro code  0x08004848     0x78  ABImemmove_unaligned.o [5]
+  .text               ro code  0x080048c0    0x254  stm32f4xx_hal_tim.o [1]
+  .text               ro code  0x08004b14     0x4a  stm32f4xx_hal_tim_ex.o [1]
+  .text               ro code  0x08004b60      0xc  stm32f4xx_hal.o [1]
+  .text               ro code  0x08004b6c    0x230  stm32f4xx_hal_msp.o [1]
+  .text               ro code  0x08004d9c     0x24  stm32f4xx_hal_dma.o [1]
+  .text               ro code  0x08004dc0      0x2  stm32f4xx_hal_uart.o [1]
+  .text               ro code  0x08004dc4    0x7b4  uart.o [1]
+  .text               ro code  0x08005578    0x19c  stm32f4xx_hal_rcc.o [1]
+  .text               ro code  0x08005714     0x4c  strtok.o [3]
+  .text               ro code  0x08005760    0x198  xstoul.o [3]
+  .text               ro code  0x080058f8     0x42  strcmp_unaligned.o [5]
+  .text               ro code  0x0800593c    0x218  stm32f4xx_hal_gpio.o [1]
+  .text               ro code  0x08005b54     0x7c  mac_interface_uart.o [1]
+  .text               ro code  0x08005bd0     0x2c  strncmp.o [3]
+  .text               ro code  0x08005bfc      0x6  strtol.o [3]
+  .text               ro code  0x08005c04     0x5e  ABImemset.o [5]
+  .text               ro code  0x08005c62      0x2  stm32f4xx_hal_tim.o [1]
+  .text               ro code  0x08005c64      0x2  stm32f4xx_hal_tim.o [1]
+  .text               ro code  0x08005c66      0x2  stm32f4xx_hal_tim_ex.o [1]
+  .text               ro code  0x08005c68      0x2  stm32f4xx_hal_tim.o [1]
+  .text               ro code  0x08005c6a      0x2  stm32f4xx_hal_tim_ex.o [1]
+  .text               ro code  0x08005c6c      0x2  stm32f4xx_hal_tim.o [1]
+  .text               ro code  0x08005c70      0x6  ABImemclr4.o [5]
+  .text               ro code  0x08005c78     0xc4  stm32f4xx_hal_cortex.o [1]
+  .text               ro code  0x08005d3c     0xb0  queue.o [1]
+  .text               ro code  0x08005dec     0x40  stm32f4xx_hal.o [1]
+  .text               ro code  0x08005e2c     0x24  strspn.o [3]
+  .text               ro code  0x08005e50     0x24  strcspn.o [3]
+  .text               ro code  0x08005e74     0x14  isxxx.o [3]
+  .text               ro code  0x08005e88     0x14  tolower.o [3]
+  .text               ro code  0x08005e9c      0xc  errno.o [3]
+  .text               ro code  0x08005ea8    0x124  gpio.o [1]
+  .text               ro code  0x08005fcc     0x88  xstol.o [3]
+  .text               ro code  0x08006054     0x32  ABImemset48.o [5]
+  .text               ro code  0x08006086     0x14  xlocale_c.o [3]
+  .text               ro code  0x0800609a      0xc  xlocale_c.o [3]
+  .text               ro code  0x080060a8    0x2bc  stm32f4xx_hal_rcc.o [1]
+  .text               ro code  0x08006364    0x120  main.o [1]
+  .text               ro code  0x08006484     0x34  stm32f4xx_hal.o [1]
+  .text               ro code  0x080064b8     0x74  stm32f4xx_hal_pwr_ex.o [1]
+  .text               ro code  0x0800652c     0x78  lz77_init_single.o [5]
+  .rodata             const    0x080065a4     0x60  display.o [1]
+  .text               ro code  0x08006604     0x60  system_stm32f4xx.o [1]
+  .text               ro code  0x08006664     0x50  stm32f4xx_it.o [1]
+  .text               ro code  0x080066b4     0x10  stm32f4xx_hal.o [1]
+  .text               ro code  0x080066c4     0x40  zero_init3.o [5]
+  .rodata             const    0x08006704     0x3c  hash.o [1]
+  .rodata             const    0x08006740     0x2c  integ_mac.o [1]
+  .text               ro code  0x0800676c     0x28  data_init.o [5]
+  .text               ro code  0x08006794     0x22  fpinit_M.o [4]
+  .iar.init_table     const    0x080067b8     0x20  - Linker created -
+  .text               ro code  0x080067d8     0x1a  cmain.o [5]
+  .text               ro code  0x080067f2      0x4  low_level_init.o [3]
+  .text               ro code  0x080067f6      0x4  exit.o [3]
+  .text               ro code  0x080067fc      0xa  cexit.o [5]
+  .text               ro code  0x08006808     0x14  exit.o [6]
+  .text               ro code  0x0800681c     0x16  xprout.o [3]
+  .text               ro code  0x08006834      0xc  putchar.o [3]
+  .text               ro code  0x08006840     0x10  startup_stm32f429xx.o [1]
+  .text               ro code  0x08006850      0xc  cstartup_M.o [5]
+  .rodata             const    0x0800685c      0x8  system_stm32f4xx.o [1]
+  .text               ro code  0x08006864      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x08006868      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x0800686c      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x08006870      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x08006874      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x08006878      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x0800687c      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x08006880      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x08006884      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x08006888      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x0800688c      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x08006890      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x08006894      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x08006898      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x0800689c      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x080068a0      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x080068a4      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x080068a8      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x080068ac      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x080068b0      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x080068b4      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x080068b8      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x080068bc      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x080068c0      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x080068c4      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x080068c8      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x080068cc      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x080068d0      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x080068d4      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x080068d8      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x080068dc      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x080068e0      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x080068e4      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x080068e8      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x080068ec      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x080068f0      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x080068f4      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x080068f8      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x080068fc      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x08006900      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x08006904      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x08006908      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x0800690c      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x08006910      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x08006914      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x08006918      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x0800691c      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x08006920      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x08006924      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x08006928      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x0800692c      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x08006930      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x08006934      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x08006938      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x0800693c      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x08006940      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x08006944      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x08006948      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x0800694c      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x08006950      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x08006954      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x08006958      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x0800695c      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x08006960      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x08006964      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x08006968      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x0800696c      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x08006970      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x08006974      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x08006978      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x0800697c      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x08006980      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x08006984      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x08006988      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x0800698c      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x08006990      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x08006994      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x08006998      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x0800699c      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x080069a0      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x080069a4      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x080069a8      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x080069ac      0x4  startup_stm32f429xx.o [1]
+  .text               ro code  0x080069b0      0x4  startup_stm32f429xx.o [1]
+  .rodata             const    0x080069b4      0x0  zero_init3.o [5]
+  .rodata             const    0x080069b4      0x0  lz77_init_single.o [5]
+  Initializer bytes   const    0x080069b4    0x23e  <for P2-1>
+                             - 0x08006bf2   0x6a46
+
+"P2", part 1 of 3:                          0x14d1
+  P2-1                         0x20000000   0x14d1  <Init block>
+    .data             inited   0x20000000    0x1a8  bluetooth.o [1]
+    .data             inited   0x200001a8    0x3d0  display.o [1]
+    .data             inited   0x20000578    0x19c  display.o [1]
+    .data             inited   0x20000714     0x18  hash.o [1]
+    .data             inited   0x2000072c     0x30  hash.o [1]
+    .data             inited   0x2000075c     0xc4  integ_mac.o [1]
+    .data             inited   0x20000820    0x80c  integ_mac.o [1]
+    .data             inited   0x2000102c      0x8  integ_mac.o [1]
+    .data             inited   0x20001034     0xf0  integ_mac.o [1]
+    .data             inited   0x20001124     0x2c  lifi.o [1]
+    .data             inited   0x20001150     0x10  lifi.o [1]
+    .data             inited   0x20001160     0x10  mac_interface.o [1]
+    .data             inited   0x20001170      0x4  mac_interface_uart.o [1]
+    .data             inited   0x20001174     0xc9  mac_interface_uart.o [1]
+    .data             inited   0x20001240      0xc  stm32f4xx_hal.o [1]
+    .data             inited   0x2000124c      0x4  system_stm32f4xx.o [1]
+    .data             inited   0x20001250     0x70  uart.o [1]
+    .data             inited   0x200012c0     0x40  xfiles.o [3]
+    .data             inited   0x20001300     0x40  xfiles.o [3]
+    __DLIB_PERTHREAD  inited   0x20001340     0x8c  rand.o [3]
+    __DLIB_PERTHREAD  inited   0x200013cc      0x4  strtok.o [3]
+    __DLIB_PERTHREAD  inited   0x200013d0      0x4  errno.o [3]
+    __DLIB_PERTHREAD  inited   0x200013d4     0x88  localeconv.o [3]
+    __DLIB_PERTHREAD  inited   0x2000145c     0x74  setlocale.o [3]
+    .data             inited   0x200014d0      0x1  mac_interface_uart.o [1]
+                             - 0x200014d1   0x14d1
+
+"P2", part 2 of 3:                         0x10400
+  CSTACK                       0x200014d8    0x400  <Block>
+    CSTACK            uninit   0x200014d8    0x400  <Block tail>
+  HEAP                         0x200018d8  0x10000  <Block>
+    HEAP              uninit   0x200018d8  0x10000  <Block tail>
+                             - 0x200118d8  0x10400
+
+"P2", part 3 of 3:                          0xf53c
+  .bss                zero     0x200118d8   0x7000  frame_queue.o [1]
+  .bss                zero     0x200188d8   0x7000  frame_queue.o [1]
+  .bss                zero     0x2001f8d8    0x7d0  mem_pool.o [1]
+  .bss                zero     0x200200a8    0x400  queue.o [1]
+  .bss                zero     0x200204a8    0x400  queue.o [1]
+  .bss                zero     0x200208a8    0x300  task.o [1]
+  .bss                zero     0x20020ba8     0x80  lifi.o [1]
+  .bss                zero     0x20020c28     0x50  xfiles.o [3]
+  .bss                zero     0x20020c78     0x40  timer.o [1]
+  .bss                zero     0x20020cb8     0x40  uart.o [1]
+  .bss                zero     0x20020cf8     0x40  uart.o [1]
+  .bss                zero     0x20020d38     0x40  uart.o [1]
+  .bss                zero     0x20020d78     0x1c  integ_mac.o [1]
+  .bss                zero     0x20020d94     0x1c  lifi.o [1]
+  .bss                zero     0x20020db0     0x1c  lifi.o [1]
+  .bss                zero     0x20020dcc     0x10  queue.o [1]
+  .bss                zero     0x20020ddc      0x8  frame_queue.o [1]
+  .bss                zero     0x20020de4      0x8  frame_queue.o [1]
+  .bss                zero     0x20020dec      0x8  mem_pool.o [1]
+  .bss                zero     0x20020df4      0x8  task.o [1]
+  .bss                zero     0x20020dfc      0x8  xxmemxmalloc.o [3]
+  .bss                zero     0x20020e04      0x5  bluetooth.o [1]
+  .bss                zero     0x20020e09      0x1  lifi.o [1]
+  .bss                zero     0x20020e0c      0x4  mac_interface_uart.o [1]
+  .bss                zero     0x20020e10      0x4  xgetmemchunk.o [3]
+                             - 0x20020e14   0xf53c
+
+
+*******************************************************************************
+*** INIT TABLE
+***
+
+          Address     Size
+          -------     ----
+Zero (__iar_zero_init3)
+    1 destination range, total size 0xf53c:
+          0x200118d8  0xf53c
+
+Copy/lz77 (__iar_lz77_init_single3)
+    1 source range, total size 0x23e (10% of destination):
+          0x080069b4   0x23e
+    1 destination range, total size 0x14d1:
+          0x20000000  0x14d1
+
+
+
+*******************************************************************************
+*** MODULE SUMMARY
+***
+
+    Module                  ro code  ro data  rw data
+    ------                  -------  -------  -------
+C:\Users\PanJun-Kim\Documents\CubeMX\MAC_TEST\EWARM\MAC_TEST\Obj: [1]
+    bluetooth.o                 776       45      429
+    display.o                   536      246    1 388
+    frame_queue.o               386            57 360
+    gpio.o                      292
+    hash.o                      472       67       72
+    integ_mac.o               3 324      314    2 532
+    lifi.o                      168        7      245
+    mac_interface.o             888        1       16
+    mac_interface_uart.o        124       23      210
+    main.o                      288
+    mem_pool.o                  140             2 008
+    queue.o                     176             2 064
+    startup_stm32f429xx.o       780
+    stm32f4xx_hal.o             184        2       12
+    stm32f4xx_hal_cortex.o      196
+    stm32f4xx_hal_dma.o          36
+    stm32f4xx_hal_gpio.o        536
+    stm32f4xx_hal_msp.o         560
+    stm32f4xx_hal_pwr_ex.o      116
+    stm32f4xx_hal_rcc.o       1 112
+    stm32f4xx_hal_tim.o         604
+    stm32f4xx_hal_tim_ex.o       78
+    stm32f4xx_hal_uart.o      1 612
+    stm32f4xx_it.o               80
+    system_stm32f4xx.o           96        8        4
+    task.o                      860               776
+    timer.o                     244                64
+    uart.o                    1 972       13      304
+    -------------------------------------------------
+    Total:                   16 636      726   67 484
+
+command line: [2]
+    -------------------------------------------------
+    Total:
+
+dl7M_tlf.a: [3]
+    div.o                        14
+    errno.o                      12                 4
+    exit.o                        4
+    isxxx.o                      20
+    localeconv.o                108       15      136
+    low_level_init.o              4
+    printf.o                     36
+    putchar.o                    12
+    rand.o                      224       15      140
+    setlocale.o                  36       12      116
+    sprintf.o                    52
+    strcspn.o                    36
+    strncmp.o                    44
+    strspn.o                     36
+    strtok.o                     76        1        4
+    strtol.o                      6
+    tolower.o                    20
+    xencoding_sb.o               96
+    xfiles.o                              13      208
+    xgetmemchunk.o               44                 4
+    xlocale_c.o                  32
+    xmbcurmax.o                  10
+    xmbtowc.o                    32
+    xprintffull.o             4 506
+    xprout.o                     22
+    xsprout.o                    10
+    xstol.o                     136
+    xstoul.o                    408
+    xtls.o                        2
+    xwctomb.o                    26
+    xxmemxfree.o                128
+    xxmemxmalloc.o              176                 8
+    -------------------------------------------------
+    Total:                    6 368       56      620
+
+m7M_tls.a: [4]
+    DblAdd.o                    212
+    DblCmpGe.o                   46
+    DblCmpLe.o                   46
+    DblDiv.o                    598
+    DblMul.o                    418
+    DblSub.o                    384
+    DblToI32.o                   88
+    I32ToDbl.o                   48
+    ceil.o                      110
+    fpinit_M.o                   34
+    xdnorm.o                     68
+    xdscale.o                   276
+    -------------------------------------------------
+    Total:                    2 328
+
+rt7M_tl.a: [5]
+    ABImemclr.o                   6
+    ABImemclr4.o                  6
+    ABImemcpy_unaligned.o       118
+    ABImemmove_unaligned.o      120
+    ABImemset.o                  94
+    ABImemset48.o                50
+    I64DivMod.o                 238
+    I64DivZer.o                   2
+    cexit.o                      10
+    cmain.o                      26
+    cstartup_M.o                 12
+    data_init.o                  40
+    lz77_init_single.o          120
+    memchr.o                     88
+    memcmp_unaligned.o           98
+    strchr.o                     22
+    strcmp_unaligned.o           66
+    strcpy_unaligned.o           68
+    strlen.o                     54
+    strncpy_unaligned.o         108
+    zero_init3.o                 64
+    -------------------------------------------------
+    Total:                    1 410
+
+shb_l.a: [6]
+    exit.o                       20
+    -------------------------------------------------
+    Total:                       20
+
+    Gaps                         56        2        5
+    Linker created                        32   66 560
+-----------------------------------------------------
+    Grand Total:             26 818      816  134 669
+
+
+*******************************************************************************
+*** ENTRY LIST
+***
+
+Entry                      Address    Size  Type      Object
+-----                      -------    ----  ----      ------
+.iar.init_table$$Base   0x080067b8           --   Gb  - Linker created -
+.iar.init_table$$Limit  0x080067d8           --   Gb  - Linker created -
+?main                   0x080067d9          Code  Gb  cmain.o [5]
+AHBPrescTable           0x08006654    0x10  Data  Gb  system_stm32f4xx.o [1]
+APBPrescTable           0x0800685c     0x8  Data  Gb  system_stm32f4xx.o [1]
+AT                      0x20000074     0x4  Data  Gb  bluetooth.o [1]
+AddHashData             0x08002da7    0x1c  Code  Gb  hash.o [1]
+BAUD                    0x20000088     0x8  Data  Gb  bluetooth.o [1]
+BT_M_Init               0x0800439d    0x9a  Code  Gb  bluetooth.o [1]
+BT_START1               0x20000160     0xc  Data  Gb  bluetooth.o [1]
+BT_S_Init               0x0800443f    0xa8  Code  Gb  bluetooth.o [1]
+BusFault_Handler        0x0800666b     0x2  Code  Gb  stm32f4xx_it.o [1]
+CON_MAC1                0x20000180    0x14  Data  Gb  bluetooth.o [1]
+CON_MAC2                0x20000194    0x14  Data  Gb  bluetooth.o [1]
+CSTACK$$Base            0x200014d8           --   Gb  - Linker created -
+CSTACK$$Limit           0x200018d8           --   Gb  - Linker created -
+DebugMon_Handler        0x08006671     0x2  Code  Gb  stm32f4xx_it.o [1]
+EXTI9_5_IRQHandler      0x080066ad     0x8  Code  Gb  stm32f4xx_it.o [1]
+FindHashData            0x08002dc3    0x34  Code  Gb  hash.o [1]
+GPIO_Init               0x08005ea9    0xaa  Code  Gb  gpio.o [1]
+HAL_DMA_Abort_IT        0x08004d9d    0x24  Code  Gb  stm32f4xx_hal_dma.o [1]
+HAL_Delay               0x08003595    0x28  Code  Wk  stm32f4xx_hal.o [1]
+HAL_GPIO_EXTI_Callback  0x08005f5f    0x4c  Code  Gb  gpio.o [1]
+HAL_GPIO_EXTI_IRQHandler
+                        0x08005b09    0x10  Code  Gb  stm32f4xx_hal_gpio.o [1]
+HAL_GPIO_Init           0x0800593d   0x1b8  Code  Gb  stm32f4xx_hal_gpio.o [1]
+HAL_GPIO_ReadPin        0x08005af5     0xc  Code  Gb  stm32f4xx_hal_gpio.o [1]
+HAL_GPIO_WritePin       0x08005b01     0x8  Code  Gb  stm32f4xx_hal_gpio.o [1]
+HAL_GetTick             0x08004b61     0xc  Code  Wk  stm32f4xx_hal.o [1]
+HAL_IncTick             0x080066b5    0x10  Code  Wk  stm32f4xx_hal.o [1]
+HAL_Init                0x08006485    0x30  Code  Gb  stm32f4xx_hal.o [1]
+HAL_InitTick            0x08005ded    0x40  Code  Wk  stm32f4xx_hal.o [1]
+HAL_MspInit             0x08004b6d    0x34  Code  Gb  stm32f4xx_hal_msp.o [1]
+HAL_NVIC_EnableIRQ      0x08005ce7     0xc  Code  Gb  stm32f4xx_hal_cortex.o [1]
+HAL_NVIC_SetPriority    0x08005cad    0x3a  Code  Gb  stm32f4xx_hal_cortex.o [1]
+HAL_NVIC_SetPriorityGrouping
+                        0x08005c93    0x1a  Code  Gb  stm32f4xx_hal_cortex.o [1]
+HAL_PWREx_EnableOverDrive
+                        0x080064b9    0x44  Code  Gb  stm32f4xx_hal_pwr_ex.o [1]
+HAL_RCC_ClockConfig     0x08005579    0xfa  Code  Gb  stm32f4xx_hal_rcc.o [1]
+HAL_RCC_GetPCLK1Freq    0x0800567f    0x10  Code  Gb  stm32f4xx_hal_rcc.o [1]
+HAL_RCC_GetPCLK2Freq    0x0800568f     0xe  Code  Gb  stm32f4xx_hal_rcc.o [1]
+HAL_RCC_GetSysClockFreq
+                        0x080056bd    0x58  Code  Wk  stm32f4xx_hal_rcc.o [1]
+HAL_RCC_OscConfig       0x080060a9   0x2bc  Code  Wk  stm32f4xx_hal_rcc.o [1]
+HAL_SYSTICK_Config      0x08005cfb    0x28  Code  Gb  stm32f4xx_hal_cortex.o [1]
+HAL_TIMEx_BreakCallback
+                        0x08005c67     0x2  Code  Wk  stm32f4xx_hal_tim_ex.o [1]
+HAL_TIMEx_CommutationCallback
+                        0x08005c6b     0x2  Code  Wk  stm32f4xx_hal_tim_ex.o [1]
+HAL_TIMEx_MasterConfigSynchronization
+                        0x08004b15    0x4a  Code  Gb  stm32f4xx_hal_tim_ex.o [1]
+HAL_TIM_Base_Init       0x080048c1    0x1a  Code  Gb  stm32f4xx_hal_tim.o [1]
+HAL_TIM_Base_MspInit    0x08004d39    0x38  Code  Gb  stm32f4xx_hal_msp.o [1]
+HAL_TIM_Base_Start_IT   0x080048db    0x16  Code  Gb  stm32f4xx_hal_tim.o [1]
+HAL_TIM_IC_CaptureCallback
+                        0x08005c63     0x2  Code  Wk  stm32f4xx_hal_tim.o [1]
+HAL_TIM_IRQHandler      0x0800490d   0x142  Code  Gb  stm32f4xx_hal_tim.o [1]
+HAL_TIM_OC_DelayElapsedCallback
+                        0x08005c65     0x2  Code  Wk  stm32f4xx_hal_tim.o [1]
+HAL_TIM_PWM_PulseFinishedCallback
+                        0x08005c6d     0x2  Code  Wk  stm32f4xx_hal_tim.o [1]
+HAL_TIM_PeriodElapsedCallback
+                        0x080034df    0x2a  Code  Gb  timer.o [1]
+HAL_TIM_TriggerCallback
+                        0x08005c69     0x2  Code  Wk  stm32f4xx_hal_tim.o [1]
+HAL_UART_ErrorCallback  0x08004dc1     0x2  Code  Wk  stm32f4xx_hal_uart.o [1]
+HAL_UART_IRQHandler     0x08003831   0x14e  Code  Gb  stm32f4xx_hal_uart.o [1]
+HAL_UART_Init           0x080035bd    0x28  Code  Gb  stm32f4xx_hal_uart.o [1]
+HAL_UART_MspInit        0x08004ba1   0x150  Code  Gb  stm32f4xx_hal_msp.o [1]
+HAL_UART_Receive        0x080036cb    0xa6  Code  Gb  stm32f4xx_hal_uart.o [1]
+HAL_UART_Receive_IT     0x080037c7    0x4a  Code  Gb  stm32f4xx_hal_uart.o [1]
+HAL_UART_RxCpltCallback
+                        0x08004f85   0x46c  Code  Gb  uart.o [1]
+HAL_UART_Transmit       0x0800362b    0xa0  Code  Gb  stm32f4xx_hal_uart.o [1]
+HAL_UART_Transmit_IT    0x08003787    0x40  Code  Gb  stm32f4xx_hal_uart.o [1]
+HAL_UART_TxCpltCallback
+                        0x080054a7    0x4e  Code  Gb  uart.o [1]
+HEAP$$Base              0x200018d8           --   Gb  - Linker created -
+HEAP$$Limit             0x200118d8           --   Gb  - Linker created -
+HardFault_Handler       0x08006667     0x2  Code  Gb  stm32f4xx_it.o [1]
+IMME                    0x20000158     0x8  Data  Gb  bluetooth.o [1]
+LoadInt                 0x08000823    0x6e  Code  Lc  xprintffull.o [3]
+MAC1                    0x200000b0    0x18  Data  Gb  bluetooth.o [1]
+MAC2                    0x200000c8    0x18  Data  Gb  bluetooth.o [1]
+MODE                    0x200000ec     0x8  Data  Gb  bluetooth.o [1]
+MX_TIM6_Init            0x080034a1    0x3e  Code  Gb  timer.o [1]
+MemManage_Handler       0x08006669     0x2  Code  Gb  stm32f4xx_it.o [1]
+NMI_Handler             0x08006665     0x2  Code  Gb  stm32f4xx_it.o [1]
+NOTI                    0x20000174     0xc  Data  Gb  bluetooth.o [1]
+NVIC_SetPriority        0x08005c79    0x1a  Code  Lc  stm32f4xx_hal_cortex.o [1]
+OK                      0x20000078     0x4  Data  Gb  bluetooth.o [1]
+PendSV_Handler          0x08006673     0x2  Code  Gb  stm32f4xx_it.o [1]
+PrintAllHashData        0x08002df7    0x4a  Code  Gb  hash.o [1]
+PrintHashData           0x08002e41    0x82  Code  Gb  hash.o [1]
+QR_MAC_ADDRESS          0x20000090     0xc  Data  Gb  bluetooth.o [1]
+RENEW                   0x20000100     0x8  Data  Gb  bluetooth.o [1]
+RESULT_ROLE             0x20000138     0x8  Data  Gb  bluetooth.o [1]
+Region$$Table$$Base     0x080067b8           --   Gb  - Linker created -
+Region$$Table$$Limit    0x080067d8           --   Gb  - Linker created -
+SAVE_ADDRESS            0x2000009c    0x14  Data  Gb  bluetooth.o [1]
+SET_BAUD                0x2000007c     0xc  Data  Gb  bluetooth.o [1]
+SET_IMME0               0x20000140     0xc  Data  Gb  bluetooth.o [1]
+SET_IMME1               0x2000014c     0xc  Data  Gb  bluetooth.o [1]
+SET_MASTER              0x20000120     0xc  Data  Gb  bluetooth.o [1]
+SET_MODE                0x200000e0     0xc  Data  Gb  bluetooth.o [1]
+SET_RENEW               0x200000f4     0xc  Data  Gb  bluetooth.o [1]
+SET_RESET               0x20000108     0xc  Data  Gb  bluetooth.o [1]
+SET_SCAN                0x20000114     0xc  Data  Gb  bluetooth.o [1]
+SET_SLAVE               0x2000012c     0xc  Data  Gb  bluetooth.o [1]
+START1                  0x2000016c     0x8  Data  Gb  bluetooth.o [1]
+STATUS_TABLE            0x2000075c     0x8  Data  Gb  integ_mac.o [1]
+SVC_Handler             0x0800666f     0x2  Code  Gb  stm32f4xx_it.o [1]
+SysTick_Handler         0x08006675     0x4  Code  Gb  stm32f4xx_it.o [1]
+SystemClock_Config      0x080063b1    0x9c  Code  Gb  main.o [1]
+SystemCoreClock         0x2000124c     0x4  Data  Gb  system_stm32f4xx.o [1]
+SystemInit              0x08006605    0x3a  Code  Gb  system_stm32f4xx.o [1]
+TIM6_DAC_IRQHandler     0x08006691     0x6  Code  Gb  stm32f4xx_it.o [1]
+TIM_Base_SetConfig      0x08004a55    0x90  Code  Gb  stm32f4xx_hal_tim.o [1]
+Task_f                  0x20020df4     0x4  Data  Gb  task.o [1]
+Task_q                  0x200208a8   0x300  Data  Gb  task.o [1]
+Task_r                  0x20020df8     0x4  Data  Gb  task.o [1]
+Thead                   0x20020cb4     0x4  Data  Gb  timer.o [1]
+UART2_Init              0x08004eb1    0x1e  Code  Gb  uart.o [1]
+UART3_Init              0x08004eef    0x54  Code  Gb  uart.o [1]
+UART4_IRQHandler        0x08006685     0x6  Code  Gb  stm32f4xx_it.o [1]
+UART4_Init              0x08004f43    0x1e  Code  Gb  uart.o [1]
+UART5_IRQHandler        0x0800668b     0x6  Code  Gb  stm32f4xx_it.o [1]
+UART5_Init              0x08004f61    0x24  Code  Gb  uart.o [1]
+UART_DMAAbortOnError    0x080039f5     0xc  Code  Lc  stm32f4xx_hal_uart.o [1]
+UART_EndRxTransfer      0x080039d5    0x1c  Code  Lc  stm32f4xx_hal_uart.o [1]
+UART_Receive_IT         0x08003a01    0x88  Code  Lc  stm32f4xx_hal_uart.o [1]
+UART_SetConfig          0x08003a89   0x13a  Code  Lc  stm32f4xx_hal_uart.o [1]
+UART_WaitOnFlagUntilTimeout
+                        0x0800397f    0x56  Code  Lc  stm32f4xx_hal_uart.o [1]
+USART2_IRQHandler       0x08006679     0x6  Code  Gb  stm32f4xx_it.o [1]
+USART3_IRQHandler       0x0800667f     0x6  Code  Gb  stm32f4xx_it.o [1]
+UsageFault_Handler      0x0800666d     0x2  Code  Gb  stm32f4xx_it.o [1]
+_EncodingSb_Mbtowc      0x08001f4f    0x30  Code  Gb  xencoding_sb.o [3]
+_EncodingSb_Mbtowc::initial
+                        0x08001f8c     0x8  Data  Lc  xencoding_sb.o [3]
+_EncodingSb_Wctomb      0x08001f35    0x1a  Code  Gb  xencoding_sb.o [3]
+_EncodingSb_Wctomb::initial
+                        0x08001f84     0x8  Data  Lc  xencoding_sb.o [3]
+_GenldFull              0x080010a9   0x254  Code  Lc  xprintffull.o [3]
+_IsdstStr               0x20001460     0x4  Data  Gb  setlocale.o [3]
+_LdtobFull              0x08000ca9   0x3fa  Code  Lc  xprintffull.o [3]
+_LitobFull              0x08000b9d   0x10a  Code  Lc  xprintffull.o [3]
+_LocaleC_isspace        0x08006087    0x14  Code  Gb  xlocale_c.o [3]
+_LocaleC_tolower        0x0800609b     0xc  Code  Gb  xlocale_c.o [3]
+_LocaleEncoding         0x08001f23     0xe  Code  Gb  setlocale.o [3]
+_LocaleForCat           0x08001f11    0x12  Code  Gb  setlocale.o [3]
+_LocaleReturnString     0x20001480    0x50  Data  Lc  setlocale.o [3]
+_Locale_Profile         0x20001464    0x1c  Data  Gb  setlocale.o [3]
+_Locale_aeabi_lconv     0x20001424    0x38  Data  Gb  localeconv.o [3]
+_Locale_lconv           0x200013d4    0x50  Data  Gb  localeconv.o [3]
+_Mbtowc                 0x08001347    0x20  Code  Gb  xmbtowc.o [3]
+_PrintfFull             0x080001ad   0x660  Code  Gb  xprintffull.o [3]
+_Prout                  0x0800681d    0x16  Code  Gb  xprout.o [3]
+_PutcharsFull           0x080012fd    0x2e  Code  Lc  xprintffull.o [3]
+_PutstrFull             0x08000891   0x306  Code  Lc  xprintffull.o [3]
+_Rand_idx               0x20001348     0x4  Data  Lc  rand.o [3]
+_Rand_rv                0x2000134c    0x80  Data  Lc  rand.o [3]
+_Randinit               0x20001340     0x1  Data  Gb  rand.o [3]
+_Randseed               0x20001344     0x4  Data  Gb  rand.o [3]
+_SProut                 0x08001367     0xa  Code  Gb  xsprout.o [3]
+_Strtok_ssave           0x200013cc     0x4  Data  Lc  strtok.o [3]
+_TzoneStr               0x2000145c     0x4  Data  Gb  setlocale.o [3]
+_Wctomb                 0x080014d5    0x1a  Code  Gb  xwctomb.o [3]
+__aeabi_cdcmple         0x0800171d          Code  Gb  DblCmpLe.o [4]
+__aeabi_cdrcmple        0x0800174d          Code  Gb  DblCmpGe.o [4]
+__aeabi_d2iz            0x08001891          Code  Gb  DblToI32.o [4]
+__aeabi_d2uiz           0x080018bd          Code  Gb  DblToI32.o [4]
+__aeabi_ddiv            0x08001c3d          Code  Gb  DblDiv.o [4]
+__aeabi_dmul            0x08001a99          Code  Gb  DblMul.o [4]
+__aeabi_dsub            0x08001919          Code  Gb  DblSub.o [4]
+__aeabi_errno_addr      0x08005e9d     0x6  Code  Gb  errno.o [3]
+__aeabi_i2d             0x080018e9          Code  Gb  I32ToDbl.o [4]
+__aeabi_ldiv0           0x08001fc1          Code  Gb  I64DivZer.o [5]
+__aeabi_memclr          0x08004841          Code  Gb  ABImemclr.o [5]
+__aeabi_memclr4         0x08005c71          Code  Gb  ABImemclr4.o [5]
+__aeabi_ui2d            0x080018fd          Code  Gb  I32ToDbl.o [4]
+__aeabi_uldivmod        0x080015e9          Code  Gb  I64DivMod.o [5]
+__cmain                 0x080067d9          Code  Gb  cmain.o [5]
+__data_Aldata           0x20020dfc     0x8  Data  Gb  xxmemxmalloc.o [3]
+__data_GetMemChunk      0x08001f95    0x2c  Code  Gb  xgetmemchunk.o [3]
+__data_GetMemChunk::start
+                        0x20020e10     0x4  Data  Lc  xgetmemchunk.o [3]
+__exit                  0x08006809    0x14  Code  Gb  exit.o [6]
+__iar_Dnorm             0x080016d7    0x44  Code  Gb  xdnorm.o [4]
+__iar_Dscale            0x0800177d   0x114  Code  Gb  xdscale.o [4]
+__iar_Errno             0x200013d0     0x4  Data  Gb  errno.o [3]
+__iar_Locale_lconv_init
+                        0x08001e95    0x3a  Code  Gb  localeconv.o [3]
+__iar_Mbcurmax          0x08001419     0xa  Code  Gb  xmbcurmax.o [3]
+__iar_Memchr            0x080013c1          Code  Gb  memchr.o [5]
+__iar_Memset4_word      0x08006055          Code  Gb  ABImemset48.o [5]
+__iar_Memset8_word      0x08006055          Code  Gb  ABImemset48.o [5]
+__iar_Memset_word       0x08005c05          Code  Gb  ABImemset.o [5]
+__iar_Stdin             0x200012c0    0x40  Data  Gb  xfiles.o [3]
+__iar_Stdout            0x20001300    0x40  Data  Gb  xfiles.o [3]
+__iar_Stolx             0x08005fcd    0x88  Code  Gb  xstol.o [3]
+__iar_Stoul             0x080058a5     0x4  Code  Gb  xstoul.o [3]
+__iar_Stoulx            0x08005761   0x13e  Code  Gb  xstoul.o [3]
+__iar_Strchr            0x08001371          Code  Gb  strchr.o [5]
+__iar_ceil              0x08003441          Code  Gb  ceil.o [4]
+__iar_ceill             0x08003441          Code  Gb  ceil.o [4]
+__iar_d2uiz             0x080018c9          Code  Gb  DblToI32.o [4]
+__iar_dadd              0x08001fc5          Code  Gb  DblAdd.o [4]
+__iar_data_init3        0x0800676d    0x28  Code  Gb  data_init.o [5]
+__iar_dlib_perthread_access
+                        0x08002099     0x2  Code  Gb  xtls.o [3]
+__iar_dsub              0x0800192d          Code  Gb  DblSub.o [4]
+__iar_dsubStart         0x0800193f          Code  Gb  DblSub.o [4]
+__iar_init_vfp          0x08006795          Code  Gb  fpinit_M.o [4]
+__iar_lz77_init_single3
+                        0x0800652d    0x78  Code  Gb  lz77_init_single.o [5]
+__iar_program_start     0x08006851          Code  Gb  cstartup_M.o [5]
+__iar_ui2d              0x08001901          Code  Gb  I32ToDbl.o [4]
+__iar_unaligned___aeabi_memcpy
+                        0x080014f1          Code  Gb  ABImemcpy_unaligned.o [5]
+__iar_unaligned___aeabi_memcpy4
+                        0x08001511          Code  Gb  ABImemcpy_unaligned.o [5]
+__iar_unaligned___aeabi_memcpy8
+                        0x08001511          Code  Gb  ABImemcpy_unaligned.o [5]
+__iar_unaligned___aeabi_memmove
+                        0x08004849          Code  Gb  ABImemmove_unaligned.o [5]
+__iar_unaligned___aeabi_memmove4
+                        0x08004849          Code  Gb  ABImemmove_unaligned.o [5]
+__iar_unaligned___aeabi_memmove8
+                        0x08004849          Code  Gb  ABImemmove_unaligned.o [5]
+__iar_unaligned_memcmp  0x08003399          Code  Gb  memcmp_unaligned.o [5]
+__iar_unaligned_strcmp  0x080058f9          Code  Gb  strcmp_unaligned.o [5]
+__iar_unaligned_strcpy  0x080047fd          Code  Gb  strcpy_unaligned.o [5]
+__iar_unaligned_strncpy
+                        0x08004791          Code  Gb  strncpy_unaligned.o [5]
+__iar_vfp_ceil          0x08003431          Code  Gb  ceil.o [4]
+__iar_vfp_ceill         0x08003431          Code  Gb  ceil.o [4]
+__iar_zero_init3        0x080066c5    0x40  Code  Gb  zero_init3.o [5]
+__low_level_init        0x080067f3     0x4  Code  Gb  low_level_init.o [3]
+__vector_table          0x08000000          Data  Gb  startup_stm32f429xx.o [1]
+_call_main              0x080067e5          Code  Gb  cmain.o [5]
+_exit                   0x080067fd          Code  Gb  cexit.o [5]
+_main                   0x080067ef          Code  Gb  cmain.o [5]
+addr_type_name          0x20000724     0x8  Data  Lc  hash.o [1]
+advertising_frame       0x20020d78    0x1c  Data  Gb  integ_mac.o [1]
+asc                     0x20020ba8    0x80  Data  Gb  lifi.o [1]
+bluetooth_init          0x080042dd    0x24  Code  Gb  bluetooth.o [1]
+bluetooth_send          0x08004301    0x38  Code  Gb  bluetooth.o [1]
+btBuf                   0x20000008    0x64  Data  Gb  bluetooth.o [1]
+bt_broadcast_addr       0x2000006c     0x8  Data  Gb  bluetooth.o [1]
+bt_count                0x20020e06     0x1  Data  Gb  bluetooth.o [1]
+bt_dis_count            0x20020e07     0x1  Data  Gb  bluetooth.o [1]
+bt_enable_flag          0x20020e08     0x1  Data  Gb  bluetooth.o [1]
+bt_get_mac_addr         0x0800451f    0x10  Code  Gb  bluetooth.o [1]
+bt_index                0x20020e05     0x1  Data  Gb  bluetooth.o [1]
+bt_mac_addr             0x20000000     0x8  Data  Gb  bluetooth.o [1]
+bt_state                0x20020e04     0x1  Data  Gb  bluetooth.o [1]
+calcFCS                 0x08005bb9    0x18  Code  Gb  mac_interface_uart.o [1]
+cc2530_broadcast_addr   0x20001168     0x8  Data  Gb  mac_interface.o [1]
+cc2530_get_mac_addr     0x08004277    0x10  Code  Gb  mac_interface.o [1]
+cc2530_mac_addr         0x20001160     0x8  Data  Gb  mac_interface.o [1]
+ceil                    0x08003441          Code  Gb  ceil.o [4]
+ceill                   0x08003441          Code  Gb  ceil.o [4]
+check_all_fragment_recv
+                        0x20000858     0x4  Data  Gb  integ_mac.o [1]
+check_last_fragment_offset
+                        0x2000083d     0x1  Data  Gb  integ_mac.o [1]
+cur_media               0x20000765     0x1  Data  Gb  integ_mac.o [1]
+deviceType              0x20000767     0x1  Data  Gb  integ_mac.o [1]
+deviceType_str          0x2000072c     0x8  Data  Lc  hash.o [1]
+digits                  0x080058a8    0x28  Data  Lc  xstoul.o [3]
+display                 0x08002f91    0x18  Code  Gb  display.o [1]
+display_buffer          0x200001c4   0x3b4  Data  Gb  display.o [1]
+display_buffer_index    0x200001a8     0x1  Data  Gb  display.o [1]
+div                     0x08001f01     0xe  Code  Gb  div.o [3]
+exit                    0x080067f7     0x4  Code  Gb  exit.o [3]
+f_pool                  0x20020dec     0x4  Data  Gb  mem_pool.o [1]
+fgetc                   0x08004e01    0x1a  Code  Gb  uart.o [1]
+fgets                   0x08004e1b    0x34  Code  Gb  uart.o [1]
+fi                      0x20020dcc     0x4  Data  Gb  queue.o [1]
+fo                      0x20020dd4     0x4  Data  Gb  queue.o [1]
+fputc                   0x08004dc5    0x3c  Code  Gb  uart.o [1]
+frame_queue             0x200118d8  0x7000  Data  Gb  frame_queue.o [1]
+frame_queue_add_retrans_num
+                        0x08003285    0x26  Code  Gb  frame_queue.o [1]
+frame_queue_change_media
+                        0x080032ab    0x18  Code  Gb  frame_queue.o [1]
+frame_queue_delete      0x08003239    0x1c  Code  Gb  frame_queue.o [1]
+frame_queue_init        0x08003215     0x4  Code  Gb  frame_queue.o [1]
+frame_queue_insert      0x08003219    0x20  Code  Gb  frame_queue.o [1]
+frame_queue_remove      0x08003255    0x22  Code  Gb  frame_queue.o [1]
+free                    0x08001569    0x7a  Code  Gb  xxmemxfree.o [3]
+front                   0x20020ddc     0x4  Data  Gb  frame_queue.o [1]
+fun_get_addr            0x2000079c     0xc  Data  Gb  integ_mac.o [1]
+fun_init                0x20000790     0xc  Data  Gb  integ_mac.o [1]
+fun_send                0x2000084c     0xc  Data  Gb  integ_mac.o [1]
+get_hashNode            0x08002d99     0xe  Code  Gb  hash.o [1]
+get_mem                 0x080031a7    0x2a  Code  Gb  mem_pool.o [1]
+get_seq_number          0x0800298f     0xa  Code  Gb  integ_mac.o [1]
+hashTable               0x20000734    0x28  Data  Gb  hash.o [1]
+hood_integ_address      0x2000076c     0x8  Data  Gb  integ_mac.o [1]
+htim6                   0x20020c78    0x3c  Data  Gb  timer.o [1]
+huart2                  0x20020cb8    0x40  Data  Gb  uart.o [1]
+huart3                  0x20001274    0x40  Data  Gb  uart.o [1]
+huart4                  0x20020cf8    0x40  Data  Gb  uart.o [1]
+huart5                  0x20020d38    0x40  Data  Gb  uart.o [1]
+init_display_buffer     0x08002f71    0x20  Code  Gb  display.o [1]
+insert_display_message  0x0800305f    0x50  Code  Gb  display.o [1]
+insert_timer            0x0800352b    0x5a  Code  Gb  timer.o [1]
+integ_broadcast_addr    0x20000818     0x8  Data  Gb  integ_mac.o [1]
+integ_find_opt_link     0x080028ed    0x8a  Code  Gb  integ_mac.o [1]
+integ_get_mac_addr      0x08002977    0x18  Code  Gb  integ_mac.o [1]
+integ_init_state        0x20000768     0x1  Data  Gb  integ_mac.o [1]
+integ_macAddr           0x20000774     0x8  Data  Gb  integ_mac.o [1]
+integ_mac_handler       0x0800209d   0x5ee  Code  Gb  integ_mac.o [1]
+integ_mac_init          0x0800274f   0x196  Code  Gb  integ_mac.o [1]
+integ_retransmit_handler
+                        0x0800273d    0x12  Code  Gb  integ_mac.o [1]
+is_at                   0x20001270     0x1  Data  Gb  uart.o [1]
+isspace                 0x08005e75    0x14  Code  Gb  isxxx.o [3]
+lifiBuf1                0x20001134    0x1c  Data  Gb  lifi.o [1]
+lifiBuf2                0x20020d94    0x1c  Data  Gb  lifi.o [1]
+lifiBuf3                0x20020db0    0x1c  Data  Gb  lifi.o [1]
+lifiBuf_index           0x20001124     0x1  Data  Gb  lifi.o [1]
+lifiBuf_p               0x200012b4     0xc  Data  Lc  uart.o [1]
+lifiBuf_recv_count      0x20001129     0x1  Data  Gb  lifi.o [1]
+lifi_broadcast_addr     0x20001158     0x8  Data  Gb  lifi.o [1]
+lifi_flag               0x2000112c     0x1  Data  Gb  lifi.o [1]
+lifi_get_mac_addr       0x08004671    0x10  Code  Gb  lifi.o [1]
+lifi_index              0x20001126     0x1  Data  Gb  lifi.o [1]
+lifi_init               0x080045e5    0x1e  Code  Gb  lifi.o [1]
+lifi_mac_addr           0x20001150     0x8  Data  Gb  lifi.o [1]
+lifi_recv_count         0x20001127     0x1  Data  Gb  lifi.o [1]
+lifi_recv_index         0x2000112b     0x1  Data  Gb  lifi.o [1]
+lifi_rx_data            0x20020e09     0x1  Data  Gb  lifi.o [1]
+lifi_send               0x08004603    0x6e  Code  Gb  lifi.o [1]
+lifi_send_index         0x2000112a     0x1  Data  Gb  lifi.o [1]
+lifi_sof_arr            0x20001130     0x4  Data  Lc  lifi.o [1]
+lifi_sof_count          0x20001128     0x1  Data  Gb  lifi.o [1]
+lifi_state              0x20001125     0x1  Data  Gb  lifi.o [1]
+localeconv              0x08001ecf    0x16  Code  Gb  localeconv.o [3]
+macAssociateRsp         0x08004075    0x40  Code  Gb  mac_interface.o [1]
+macBuf                  0x20001174    0xc8  Data  Gb  mac_interface_uart.o [1]
+macDataReq              0x080040cf    0x94  Code  Gb  mac_interface.o [1]
+macReset                0x08003ff5    0x20  Code  Gb  mac_interface.o [1]
+macScanReq              0x080041f3    0x58  Code  Gb  mac_interface.o [1]
+macSetReq               0x08004055    0x20  Code  Gb  mac_interface.o [1]
+macSoftReset            0x0800403f    0x10  Code  Gb  mac_interface.o [1]
+macStartReq             0x08004169    0x68  Code  Gb  mac_interface.o [1]
+main                    0x08006365    0x4c  Code  Gb  main.o [1]
+malloc                  0x08001425    0xac  Code  Gb  xxmemxmalloc.o [3]
+media_addr_len          0x20000714     0x4  Data  Lc  hash.o [1]
+media_mtu_size          0x20000840     0xc  Data  Lc  integ_mac.o [1]
+media_name              0x20000718     0xc  Data  Lc  hash.o [1]
+media_name              0x2000077c     0xc  Data  Lc  integ_mac.o [1]
+media_name_for_display  0x200005c8     0xc  Data  Gb  display.o [1]
+mem_pool                0x2001f8d8   0x7d0  Data  Gb  mem_pool.o [1]
+mem_pool_init           0x08003189    0x1e  Code  Gb  mem_pool.o [1]
+memchr                  0x080013c1          Code  Gb  memchr.o [5]
+message_buffer          0x200007a8    0x50  Data  Gb  integ_mac.o [1]
+mtUtilGetPrimaryIEEE    0x0800424b    0x2c  Code  Gb  mac_interface.o [1]
+my_bluetooth_address    0x20000808     0x8  Data  Gb  integ_mac.o [1]
+my_cc2530_address       0x20000810     0x8  Data  Gb  integ_mac.o [1]
+my_integ_address        0x200007f8     0x8  Data  Gb  integ_mac.o [1]
+my_lifi_address         0x20000800     0x8  Data  Gb  integ_mac.o [1]
+ndigs                   0x080058d0    0x28  Data  Lc  xstoul.o [3]
+new_line                0x200001c0     0x2  Data  Gb  display.o [1]
+obuf                    0x20020c28    0x50  Data  Lc  xfiles.o [3]
+opt_media               0x20000766     0x1  Data  Gb  integ_mac.o [1]
+prev_media              0x2000083c     0x1  Data  Gb  integ_mac.o [1]
+print_info              0x08002fa9    0xb0  Code  Gb  display.o [1]
+print_message           0x080030af    0x30  Code  Gb  display.o [1]
+printf                  0x0800476d    0x24  Code  Gb  printf.o [3]
+putchar                 0x08006835     0xc  Code  Gb  putchar.o [3]
+q_init                  0x08005d3d     0xe  Code  Gb  queue.o [1]
+qi                      0x200204a8   0x400  Data  Gb  queue.o [1]
+qi_delete               0x08005d6b    0x1c  Code  Gb  queue.o [1]
+qi_insert               0x08005d4b    0x20  Code  Gb  queue.o [1]
+qi_remove               0x08005d87    0x1a  Code  Gb  queue.o [1]
+qo                      0x200200a8   0x400  Data  Gb  queue.o [1]
+qo_delete               0x08005dc5    0x1c  Code  Gb  queue.o [1]
+qo_insert               0x08005da1    0x1e  Code  Gb  queue.o [1]
+r_pool                  0x20020df0     0x4  Data  Gb  mem_pool.o [1]
+rand                    0x0800468d    0xe0  Code  Gb  rand.o [3]
+re_frame_queue          0x200188d8  0x7000  Data  Gb  frame_queue.o [1]
+re_frame_queue_change_media
+                        0x080032c3    0x1c  Code  Gb  frame_queue.o [1]
+re_frame_queue_delete   0x08003369    0x28  Code  Gb  frame_queue.o [1]
+re_frame_queue_init     0x080032e7     0x2  Code  Gb  frame_queue.o [1]
+re_frame_queue_insert   0x08003329    0x26  Code  Gb  frame_queue.o [1]
+re_frame_queue_remove   0x080032f1    0x26  Code  Gb  frame_queue.o [1]
+re_front                0x20020de4     0x4  Data  Gb  frame_queue.o [1]
+re_rear                 0x20020de8     0x4  Data  Gb  frame_queue.o [1]
+rear                    0x20020de0     0x4  Data  Gb  frame_queue.o [1]
+rectange1               0x200005d4    0x50  Data  Gb  display.o [1]
+rectange1_1             0x20000624    0x50  Data  Gb  display.o [1]
+rectange2               0x20000578    0x50  Data  Gb  display.o [1]
+rectange3               0x200006c4    0x50  Data  Gb  display.o [1]
+rectange3_1             0x20000674    0x50  Data  Gb  display.o [1]
+result_string           0x20000788     0x8  Data  Lc  integ_mac.o [1]
+return_mem              0x080031d1    0x3a  Code  Gb  mem_pool.o [1]
+ri                      0x20020dd0     0x4  Data  Gb  queue.o [1]
+ro                      0x20020dd8     0x4  Data  Gb  queue.o [1]
+rxData                  0x2000126c     0x1  Data  Gb  uart.o [1]
+seqNumber               0x20000764     0x1  Data  Gb  integ_mac.o [1]
+sof                     0x2000123c     0x1  Data  Gb  mac_interface_uart.o [1]
+sprintf                 0x080033fd    0x34  Code  Gb  sprintf.o [3]
+sreqFlag                0x20020e0c     0x4  Data  Gb  mac_interface_uart.o [1]
+startMac                0x08003f65    0x90  Code  Gb  mac_interface.o [1]
+stateFlag               0x20001170     0x4  Data  Gb  mac_interface_uart.o [1]
+stateStatus             0x200014d0     0x1  Data  Gb  mac_interface_uart.o [1]
+str_message             0x200001ac    0x14  Data  Lc  display.o [1]
+strchr                  0x08001371          Code  Gb  strchr.o [5]
+strcspn                 0x08005e51    0x24  Code  Gb  strcspn.o [3]
+strlen                  0x08001389          Code  Gb  strlen.o [5]
+strncmp                 0x08005bd1    0x2c  Code  Gb  strncmp.o [3]
+strspn                  0x08005e2d    0x24  Code  Gb  strspn.o [3]
+strtok                  0x08005715    0x4c  Code  Gb  strtok.o [3]
+strtol                  0x08005bfd     0x6  Code  Gb  strtol.o [3]
+t_frame                 0x20000820    0x1c  Data  Gb  integ_mac.o [1]
+task_bt_update          0x08004339    0x3a  Code  Gb  bluetooth.o [1]
+task_cmd                0x08003c6f   0x1a6  Code  Gb  task.o [1]
+task_connect            0x08004373     0xc  Code  Gb  bluetooth.o [1]
+task_delete             0x08003c45    0x2a  Code  Gb  task.o [1]
+task_dis_connect        0x0800437f     0xc  Code  Gb  bluetooth.o [1]
+task_insert             0x08003c09    0x2a  Code  Gb  task.o [1]
+testBuf                 0x2000102c     0x8  Data  Gb  integ_mac.o [1]
+testBuf_2               0x20001034    0xf0  Data  Gb  integ_mac.o [1]
+testBuf_recv            0x2000085c   0x7d0  Data  Gb  integ_mac.o [1]
+timer_expire            0x08003509    0x22  Code  Gb  timer.o [1]
+tolower                 0x08005e89    0x14  Code  Gb  tolower.o [3]
+txData                  0x2000126d     0x1  Data  Gb  uart.o [1]
+uartSreq                0x08005b55    0x12  Code  Gb  mac_interface_uart.o [1]
+uartWrite               0x08005b67    0x46  Code  Gb  mac_interface_uart.o [1]
+uart_back               0x2000126f     0x1  Data  Gb  uart.o [1]
+uart_busy               0x2000126e     0x1  Data  Gb  uart.o [1]
+uart_echo               0x08004e4f    0x52  Code  Gb  uart.o [1]
+uart_frame              0x20001250    0x1c  Data  Gb  uart.o [1]
+utilCallbackSubCmd      0x08004025    0x1a  Code  Gb  mac_interface.o [1]
+uwTick                  0x20001244     0x4  Data  Gb  stm32f4xx_hal.o [1]
+uwTickFreq              0x20001240     0x1  Data  Gb  stm32f4xx_hal.o [1]
+uwTickPrio              0x20001248     0x4  Data  Gb  stm32f4xx_hal.o [1]
+
+
+[1] = C:\Users\PanJun-Kim\Documents\CubeMX\MAC_TEST\EWARM\MAC_TEST\Obj
+[2] = command line
+[3] = dl7M_tlf.a
+[4] = m7M_tls.a
+[5] = rt7M_tl.a
+[6] = shb_l.a
+
+   26 818 bytes of readonly  code memory
+      816 bytes of readonly  data memory
+  134 669 bytes of readwrite data memory
+
+Errors: none
+Warnings: none

@@ -50,7 +50,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
   case GPIO_PIN_8:
     // falling BT ¿¬°á ²÷±è
     if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_8) == GPIO_PIN_RESET) {
-      if(integ_init_state) {
+      if(integ_init_state && (bt_enable_flag == 1)) {
         bt_dis_count++;
         //printf("BT disconnected\r\n");
         // BT Àç¿¬°á

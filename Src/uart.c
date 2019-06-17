@@ -201,6 +201,7 @@ void UART5_Init(void)
   {
     // Error_Handler();
   }
+  HAL_UART_Receive_IT(&huart5, &lifi_rx_data,1);
 }
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
@@ -339,20 +340,168 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
   
   // LI-FI
   else if (huart->Instance == huart5.Instance) {
-    printf("lifi_interrupt");
-    lifiBuf[lifi_recv_index] = lifi_rx_data;
-    lifi_recv_index++;
-    if(lifi_recv_index == LIFI_MAX_RECV) {
+    t_char = lifi_rx_data;
+    printf("%02x ",  t_char);
+    
+    switch(lifi_state) {
+    case 0:     // 수신 한 문자가 라이파이 프레임 시작 문자인 경우
+      //if( ((t_char & 0xA0)  == 0xA0) || ((t_char &0x0E) == 0x0E) ) {  
+      if(t_char == 0xAE) {  
+        lifi_sof_count++;
+        lifi_state = 1;
+        lifi_index++;
+      }
+      else if(t_char == 0xBE) { 
+        lifi_sof_count += 2;
+        lifi_state = 2;
+        lifi_index++;
+      }
+      else {
+        lifi_sof_count = 0;
+        lifi_state = 0;
+        lifi_index = 0;
+        // pass
+      }
+      break;
+    case 1:     // 수신 한 문자가 라이파이 프레임 2번째 시작 문자인 경우
+      if( ((t_char & 0xB0)  == 0xB0) || ((t_char &0x0E) == 0x0E) ) {  
+        //if(t_char == 0xBE) {  
+        lifi_sof_count++;
+        lifi_state = 2;
+        lifi_index++;
+      }
+      else {
+        lifi_sof_count = 0;
+        lifi_state = 0;
+        lifi_index = 0;
+        // pass
+      }
+      break;
+    case 2:     // 수신 한 문자가 라이파이 프레임 3번째 시작 문자인 경우
+      if (t_char == 0xCE) {  
+        lifi_sof_count = 0;
+        lifi_state = 3;
+        lifi_index = 0;
+      }
+      else if( ((t_char & 0xC0)  == 0xC0) || ((t_char &0x0E) == 0x0E) ) { 
+        //if(t_char == 0xCE) {  
+        lifi_sof_count = 0;
+        lifi_state = 4;
+        lifi_index = 0;
+      }
+      else {
+        lifi_sof_count = 0;
+        lifi_state = 4;
+        lifi_index = 0;
+        // pass
+      }
+      break;
+    case 3:
+      // SOF 3개 수신 후 라이파이 본 프레임 수신 준비
+      // 프레임 끝을 만난 경우
+      
+      lifiBuf_p[lifiBuf_index][lifi_recv_index] = lifi_rx_data;
+      //printf("%02x[%d] len : %d\r\n ",t_char, lifi_index, lifiBuf_p[lifiBuf_index][0]-1);
+      if((lifiBuf_p[lifiBuf_index][0] <=  LIFI_MAX_RECV) && (lifiBuf_p[lifiBuf_index][0] >= INTEG_FRAME_HEADER_LEN)) {
+        HAL_UART_Receive(&huart5, lifiBuf_p[lifiBuf_index] + 1, lifiBuf_p[lifiBuf_index][0]-1, 10);
+      }
+      
+      lifiBuf_recv_count++;
+      
+      lifiBuf_index = (lifiBuf_index + 1) % 3;
       
       lifi_recv_index = 0;
       
-      // 프레임 큐에 삽입
-      memcpy((unsigned char *)&uart_frame, lifiBuf, INTEG_FRAME_HEADER_LEN);
-      uart_frame.data = get_mem();
-      memcpy(uart_frame.data, lifiBuf + INTEG_FRAME_HEADER_LEN, uart_frame.frame_length[LENGTH_LSB] - INTEG_FRAME_HEADER_LEN);
-      frame_queue_insert((unsigned char *)&uart_frame);
+      if (lifiBuf_recv_count == 4) {
+        //asc
+        int i, j;
+        for (i = 0; i < LIFI_MAX_RECV; i++) {
+          asc[lifiBuf_p[0][i]]++;
+          asc[lifiBuf_p[1][i]]++;
+          asc[lifiBuf_p[2][i]]++;
+          
+          // find
+          for(j = 0; j < 128; j++) {
+            if (asc[j] >= 2) {
+              lifiBuf_p[0][i] = j;
+              break;
+            }
+            else if (asc[j] == 1) {
+              lifiBuf_p[0][i] = j;
+              break;
+            }
+          }
+          memset(asc, '\0', 128);
+        }
+        
+        
+        lifiBuf_recv_count = 1;
+        
+        // 프레임 큐에 삽입
+        memcpy((unsigned char *)&uart_frame, lifiBuf_p[lifiBuf_index], INTEG_FRAME_HEADER_LEN);
+        uart_frame.data = get_mem();
+        memcpy(uart_frame.data, lifiBuf_p[lifiBuf_index] + INTEG_FRAME_HEADER_LEN, uart_frame.frame_length[LENGTH_LSB] - INTEG_FRAME_HEADER_LEN);
+        frame_queue_insert((unsigned char *)&uart_frame);
+        
+        
+      }
+      
+      
+      lifi_state = 0;
+      lifi_index = 0;
+      lifi_recv_count = 0;
+      lifi_sof_count = 0;
+      
+      break;
+      
+    case 4:
+      lifiBuf_recv_count++;
+      
+      lifiBuf_index = (lifiBuf_index + 1) % 3;
+      
+      lifi_recv_index = 0;
+      
+      if (lifiBuf_recv_count == 4) {
+        //asc
+        int i, j;
+        for (i = 0; i < LIFI_MAX_RECV; i++) {
+          asc[lifiBuf_p[0][i]]++;
+          asc[lifiBuf_p[1][i]]++;
+          asc[lifiBuf_p[2][i]]++;
+          
+          // find
+          for(j = 0; j < 128; j++) {
+            if (asc[j] >= 2) {
+              lifiBuf_p[0][i] = j;
+              break;
+            }
+            else if (asc[j] == 1) {
+              lifiBuf_p[0][i] = j;
+              break;
+            }
+          }
+          memset(asc, '\0', 128);
+          
+          
+          
+          lifiBuf_recv_count = 1;
+          
+          // 프레임 큐에 삽입
+          memcpy((unsigned char *)&uart_frame, lifiBuf_p[lifiBuf_index], INTEG_FRAME_HEADER_LEN);
+          uart_frame.data = get_mem();
+          memcpy(uart_frame.data, lifiBuf_p[lifiBuf_index] + INTEG_FRAME_HEADER_LEN, uart_frame.frame_length[LENGTH_LSB] - INTEG_FRAME_HEADER_LEN);
+          frame_queue_insert((unsigned char *)&uart_frame);
+        }
+        break;
+      }
+      lifi_state = 0;
+      lifi_index = 0;
+      lifi_recv_count = 0;
+      lifi_sof_count = 0;
+      
+      
     }
-    HAL_UART_Receive_IT(&huart5, &lifi_rx_data,1);
+    HAL_UART_Receive_IT(&huart5,&lifi_rx_data,1);
   }
   
   // CC2530

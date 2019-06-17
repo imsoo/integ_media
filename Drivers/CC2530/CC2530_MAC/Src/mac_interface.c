@@ -399,13 +399,13 @@ unsigned char macDataReq(unsigned char* dest_addr, unsigned char* data, int data
   memcpy(macBuf + 4, dest_addr, 8);
   
   // DestPanID
-  if(LSB(STM32_UUID[0]) == 0x2E) {      // MCU 변경시 변경 필요 함.
-    macBuf[12] = 0x28;
-    macBuf[13] = 0x28;
+  if(LSB(STM32_UUID[0]) == 0x2C) {      // MCU 변경시 변경 필요 함.
+    macBuf[12] = 0x29;
+    macBuf[13] = 0x29;
   }
   else {
-    macBuf[12] = 0x2E;
-    macBuf[13] = 0x2E;
+    macBuf[12] = 0x2C;
+    macBuf[13] = 0x2C;
   }
   
   /*

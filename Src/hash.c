@@ -91,7 +91,7 @@ struct node* FindHashData(int id)
 
 void PrintAllHashData()
 {
-  printf("\r\n 맥테이블 정보 \r\n");
+  printf("\r\n 맥테이블 정보 | Device Type : %s\r\n", deviceType_str[deviceType]);
   printf("---------------------\r\n");
   int i;
   for(i = 0; i < MAX_HASH; i++) {

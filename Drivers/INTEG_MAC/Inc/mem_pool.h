@@ -2,7 +2,7 @@
   mem_pool.h
 */
 
-#define MAX_MEM_POOL_SIZE 1000
+#define MAX_MEM_POOL_SIZE 500
 #define MEM_SIZE 96
 
 void mem_pool_init(void);

@@ -17,12 +17,14 @@ unsigned char bt_index;
 unsigned char bt_count;
 unsigned char bt_dis_count;
 unsigned char btBuf[100];
+unsigned char bt_enable_flag;
 unsigned char bluetooth_init(unsigned char deviceType)
 {
   bt_state = 0;
   bt_index = 0;
   bt_count = 0;
   bt_dis_count = 0;
+  bt_enable_flag = 1;
   
   if(deviceType == MASTER) {
     //printf("MASTER 로 초기화\r\n");
@@ -129,6 +131,12 @@ void task_bt_update(void *arg)
 void task_connect(void *arg)
 {
   HAL_UART_Transmit(&huart2, CON_MAC2, 18, 1000);
+  HAL_Delay(100);
+}
+
+void task_dis_connect(void *arg)
+{
+  HAL_UART_Transmit(&huart2, AT, 2, 1000);
   HAL_Delay(100);
 }
 

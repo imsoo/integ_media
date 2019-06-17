@@ -24,7 +24,7 @@ display.h
 #define RECT_FIRST_CON_START RECT_CHAR_START - 6
 #define RECT_SECOND_CON_START (RECT_CHAR_START + RECT_CHAR_LEN + 4)
 
-static char *str_message[MSG_NUM] = {"  LI-FI  ", "BLUETOOTH", " CC2530  ", "INTEG-MAC", " SYSTEM  "};
+static char *str_message[MSG_NUM] = {"  LI-FI  ", "BLUETOOTH", " ZIGBEE  ", "INTEG-MAC", " SYSTEM  "};
 void init_display_buffer();
 
 void insert_display_message(int message_type, char *message);

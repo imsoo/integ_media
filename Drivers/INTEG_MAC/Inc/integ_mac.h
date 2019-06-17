@@ -7,7 +7,7 @@
 // 일반 테스트 용  :  Hello
 extern unsigned char testBuf[5];
 // 단편화 테스트 용 데이터
-extern unsigned char testBuf_2[120];
+extern unsigned char testBuf_2[240];
 
 #define MEDIA_NUM 3             // 사용 매체 수
 #define LIFI 0                          // Media Type
@@ -15,7 +15,7 @@ extern unsigned char testBuf_2[120];
 #define CC2530 2
 #define OPT_MEDIA 0xF0        // 현재 최적의 매체를 사용
 
-static char *media_name[MEDIA_NUM] = {"LI-FI", "BLUETOOTH", "CC2530"};
+static char *media_name[MEDIA_NUM] = {"LI-FI", "BLUETOOTH", "ZIGBEE"};
 extern unsigned char cur_media;  // 현재 사용할 링크
 extern unsigned char opt_media;  // 현재 최적의 링크
 extern unsigned char integ_init_state; // 통합 MAC 초기화 상태
@@ -55,11 +55,16 @@ static unsigned char media_addr_len[MEDIA_NUM] = {LIFI_ADDR_LEN, BLUETOOTH_ADDR_
 // deviceType
 #define MASTER 0x00
 #define SLAVE 0x01
+extern unsigned char deviceType;
+static char * deviceType_str[2] = {"MASTER", "SLAVE"};
 
 // fragmentaion 관련
-static int media_mtu_size[MEDIA_NUM] = {28, 44, 116};
-#define MIN_MTU_SIZE 44 // 매체들 MTU 크기 중 가장 작은 값
-#define MAX_MTU_SIZE 116 // 매체들 MTU 크기 중 가장 큰 값
+static int media_mtu_size[MEDIA_NUM] = {28, 45, 93};
+#define MIN_MTU_SIZE 45 // 매체들 MTU 크기 중 가장 작은 값
+#define MAX_MTU_SIZE 93 // 매체들 MTU 크기 중 가장 큰 값
+extern unsigned int check_all_fragment_recv;
+extern unsigned char check_last_fragment_offset;
+
 
 // SEQ
 #define MAX_SEQ_NUMBER 1024                   // 순서 번호 최대
@@ -80,7 +85,7 @@ typedef struct integ_table {
   unsigned char media_addr[MEDIA_NUM][MEDIA_ADDR_LEN_MAX];      // 각 매체 주소 
 } INTEG_TABLE;
 
-#define INTEG_FRAME_HEADER_LEN 20 // 통합 맥 프레임 헤더 길이
+#define INTEG_FRAME_HEADER_LEN 21 // 통합 맥 프레임 헤더 길이
 #define INTEG_FRAME_DATA_LEN 39     // 통합 맥 프레임 데이터 길이
 #define INTEG_FRAME_TOTAL_LEN 59 + 1   // 통합 맥 프레임 헤더 + 데이터 길이
 #define INTEG_FRAME_LEN_FILED_SIZE 2    // 프레임 길이 필드 크기 2바이트
@@ -99,6 +104,7 @@ typedef struct integ_frame {
   unsigned char ackNumber;      // 응답 번호
   unsigned char fragment_number;            // 단편화 번호
   unsigned char fragment_offset;        // 프레그 먼트 오프셋
+  unsigned char fragment_offset2;        // 프레그 먼트 오프셋
   unsigned char *data;// 페이로드
 } INTEG_FRAME;
 

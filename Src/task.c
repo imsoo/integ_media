@@ -15,6 +15,7 @@ task.c
 #include "bluetooth.h"
 #include "display.h"
 #include "image.h"
+#include "mem_pool.h"
 
 struct task Task_q[MAX_TASK];
 volatile int Task_f, Task_r;
@@ -62,7 +63,7 @@ void task_cmd(void *arg)
     return;
   }
   else if(!strcmp(cp0, "t")) {  // test
-    frame.frame_length[LENGTH_LSB] = LSB(INTEG_FRAME_HEADER_LEN + 5);
+    frame.frame_length[LENGTH_LSB] = INTEG_FRAME_HEADER_LEN + 5;
     frame.frame_length[LENGTH_MSB] = 0;
     memcpy(frame.src_address, my_integ_address, INTEG_ADDR_LEN); 
     memcpy(frame.dest_address, hood_integ_address, INTEG_ADDR_LEN); 
@@ -70,12 +71,13 @@ void task_cmd(void *arg)
     //frame.media_type = cur_media;
     frame.media_type = opt_media;
     frame.message_type = DATA_MSG;
-
+    
     frame.ackNumber = 0;
     frame.fragment_number = 0;
     frame.fragment_offset = 0;
     frame.seqNumber = get_seq_number();
-    frame.data = testBuf;
+    frame.data = get_mem();
+    memcpy(frame.data, testBuf, 5);
     frame_queue_insert((unsigned char *)&frame);
     //macDataReq(broadcast_addr, &frame, frame.frame_length);
   }
@@ -84,20 +86,20 @@ void task_cmd(void *arg)
     HAL_Delay(3000);
   }
   else if(!strcmp(cp0, "s")) {  // s
-    frame.frame_length[LENGTH_LSB] = LSB(INTEG_FRAME_HEADER_LEN + IMAGE_LENGTH);
-    frame.frame_length[LENGTH_MSB] = MSB(INTEG_FRAME_HEADER_LEN + IMAGE_LENGTH);
+    frame.frame_length[LENGTH_LSB] = LSB(INTEG_FRAME_HEADER_LEN + 240);
+    frame.frame_length[LENGTH_MSB] = MSB(INTEG_FRAME_HEADER_LEN + 240);
     memcpy(frame.src_address, my_integ_address, INTEG_ADDR_LEN); 
     memcpy(frame.dest_address, hood_integ_address, INTEG_ADDR_LEN); 
     integ_find_opt_link(NULL);
     //frame.media_type = cur_media;
     frame.media_type = opt_media;
     frame.message_type = DATA_MSG;
-
+    
     frame.ackNumber = 0;
     frame.fragment_number = 0;
     frame.fragment_offset = 0;
     frame.seqNumber = get_seq_number();
-    frame.data = sample_image;
+    frame.data = testBuf_2;
     frame_queue_insert((unsigned char *)&frame);
     //macDataReq(broadcast_addr, &frame, frame.frame_length);
   }
@@ -127,6 +129,28 @@ void task_cmd(void *arg)
       printf("!!!- Wrong deviceType : [0]MASTER, [1]SLAVE\n");
       printf("$ ");
       return;
+    }
+  }
+  else if (!strcmp(cp0, "bt")) {
+    // 추가 인자 입력하지 않은 경우
+    if (cp1 == NULL) {
+      insert_display_message(SYSTEM_MSG, ("!!!- Usage : bt con|discon\r\n"));
+      display();
+      return;
+    }
+    
+    if (!strcmp(cp1, "con")) {
+      task_dis_connect("");
+      task_connect("");
+      bt_enable_flag = 1;
+    }
+    else if (!strcmp(cp1, "discon")) {
+      task_dis_connect("");
+      bt_enable_flag = 0;
+    }
+    else {
+      insert_display_message(SYSTEM_MSG, ("!!!- Usage : bt con|discon\r\n"));
+      display();
     }
   }
   // 잘못된 명령어 입력한 경우 

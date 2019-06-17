@@ -37,6 +37,7 @@ INTEG_FRAME* frame_queue_delete(void)
   return(&frame_queue[front]);
 }
 
+// 순서 번호, 단편화 번호에 맞는 프레임 삭제
 void frame_queue_remove(unsigned char seq_num, unsigned char frag_num)
 {
   int i;
@@ -50,6 +51,53 @@ void frame_queue_remove(unsigned char seq_num, unsigned char frag_num)
     }
   }
 }
+
+// 순서 번호에 맞는 프레임의 재전송 횟수 증가
+void frame_queue_add_retrans_num(unsigned char seq_num)
+{
+  int i;
+  
+  // 임시
+  for(i = 0; i < FRAME_QUEUE_SIZE; i++) {
+    if(frame_queue[i].message_type == DATA_MSG) {
+      if(frame_queue[i].seqNumber == seq_num) {
+        frame_queue[i].ackNumber += 1;
+      }
+    }
+  }
+}
+
+// 전쳋 프레임 매체 변경
+void frame_queue_change_media(unsigned char media_type, unsigned char to_media_type)
+{
+  int i;
+  
+  // 임시
+  for(i = 0; i < FRAME_QUEUE_SIZE; i++) {
+    if(frame_queue[i].message_type == DATA_MSG) {
+      if(frame_queue[i].media_type == media_type) {
+        frame_queue[i].media_type = to_media_type;
+      }
+    }
+  }
+}
+
+// 전쳋 프레임 매체 변경
+void re_frame_queue_change_media(unsigned char media_type, unsigned char to_media_type)
+{
+  int i;
+  
+  // 임시
+  for(i = 0; i < RE_FRAME_QUEUE_SIZE; i++) {
+    if(re_frame_queue[i].message_type == DATA_MSG) {
+      if(re_frame_queue[i].media_type == media_type) {
+        re_frame_queue[i].media_type = to_media_type;
+      }
+    }
+  }
+}
+
+
 
 void re_frame_queue_init(void)
 {

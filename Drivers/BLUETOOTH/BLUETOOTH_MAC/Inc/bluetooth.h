@@ -6,6 +6,7 @@ extern unsigned char bt_index;
 extern unsigned char bt_count;
 extern unsigned char bt_dis_count;
 extern unsigned char btBuf[100];
+extern unsigned char bt_enable_flag;
 unsigned char bluetooth_init(unsigned char deviceType);
 unsigned char bluetooth_send(unsigned char* dest_addr, unsigned char* data, int data_length);
 
@@ -14,6 +15,7 @@ void BT_M_Init();
 void BT_S_Init();
 void task_bt_update(void *arg);
 void task_connect(void *arg);
+void task_dis_connect(void *arg);
 unsigned char* bt_get_mac_addr(unsigned char addr_type);
 
 // AT 커맨더 진입

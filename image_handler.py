@@ -78,7 +78,7 @@ def readThread(ser):
 signal.signal(signal.SIGINT, handler)
 
 #시리얼 열기
-ser = serial.Serial('COM17', 115200)
+ser = serial.Serial('COM19', 115200)
 
 #시리얼 읽을 쓰레드 생성
 thread = threading.Thread(target=readThread, args=(ser,))
